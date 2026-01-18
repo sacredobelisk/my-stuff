@@ -11,7 +11,7 @@ type Props = {
 const items: MenuItem[] = [
   {
     key: "home",
-    icon: (
+    label: (
       <NavLink to="/" end>
         Home
       </NavLink>
