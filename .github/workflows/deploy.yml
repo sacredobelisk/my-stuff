@@ -28,7 +28,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './build' # Replace 'build' with your project's static file output directory (e.g., 'public', 'dist')
+          path: './build/client' # Replace 'build' with your project's static file output directory (e.g., 'public', 'dist')
 
   deploy:
     environment:
