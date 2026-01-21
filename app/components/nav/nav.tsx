@@ -1,4 +1,4 @@
-import { CoffeeOutlined, DollarCircleOutlined } from "@ant-design/icons";
+import { CoffeeOutlined, DollarCircleOutlined, HomeOutlined, TableOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import { NavLink } from "react-router";
@@ -10,6 +10,7 @@ type Props = {
 
 const items: MenuItem[] = [
   {
+    icon: <HomeOutlined />,
     key: "home",
     label: (
       <NavLink to="/" end>
@@ -18,11 +19,12 @@ const items: MenuItem[] = [
     ),
   },
   {
+    icon: <CoffeeOutlined />,
     key: "dining",
     label: "Dining Out",
     children: [
       {
-        icon: <CoffeeOutlined />,
+        icon: <TableOutlined />,
         key: "billCalculator",
         label: <NavLink to="/bill-calculator">Bill Calculator</NavLink>,
       },
