@@ -1,30 +1,19 @@
-import { DeleteOutlined } from "@ant-design/icons";
-import { Button, Input, InputNumber, message, Typography } from "antd";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { message } from "antd";
+import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useLocalStorage } from "~/hooks/useLocalStorage";
-import { formatCurrency } from "../../utils/number";
 import type { BillData, Person } from "./types";
+import { createDefaultBillData, DEFAULT_TAX_PERCENT, DEFAULT_TIP_PERCENT, generateKey } from "./utils";
 
-const { Text } = Typography;
+type Props = {
+  people: Person[];
+  setPeople: Dispatch<SetStateAction<Person[]>>;
+};
 
-const DEFAULT_TAX_PERCENT = 6;
-const DEFAULT_TIP_PERCENT = 20;
-
-const generateKey = () => Math.random().toString(36).substring(2, 9);
-
-const createDefaultBillData = (): BillData => ({
-  finalTotal: null,
-  people: [{ key: generateKey(), name: "", subtotal: 0 }],
-  taxPercent: DEFAULT_TAX_PERCENT,
-  tipPercent: DEFAULT_TIP_PERCENT,
-});
-
-export function useBillCalculator() {
+export function useBillCalculator({ people, setPeople }: Props) {
   const [savedData, setSavedData] = useLocalStorage<BillData>("billCalculator", createDefaultBillData());
 
   const [finalTotal, setFinalTotal] = useState<number | null>(savedData.finalTotal);
   const [isEditingFinalTotal, setIsEditingFinalTotal] = useState(false);
-  const [people, setPeople] = useState<Person[]>(savedData.people);
   const [taxPercent, setTaxPercent] = useState(savedData.taxPercent);
   const [tipPercent, setTipPercent] = useState(savedData.tipPercent);
 
@@ -60,33 +49,8 @@ export function useBillCalculator() {
     }
   }, [calculatedTotal, isEditingFinalTotal]);
 
-  const addPerson = () => {
-    setPeople([...people, { key: generateKey(), name: "", subtotal: 0 }]);
-  };
-
-  const removePerson = useCallback(
-    (key: string) => {
-      if (people.length > 1) {
-        setPeople(people.filter((p) => p.key !== key));
-      }
-    },
-    [people]
-  );
-
-  const updatePerson = useCallback(
-    (key: string, field: keyof Person, value: string | number) => {
-      setPeople(people.map((p) => (p.key === key ? { ...p, [field]: value } : p)));
-    },
-    [people]
-  );
-
   const handleSave = () => {
-    setSavedData({
-      people,
-      taxPercent,
-      tipPercent,
-      finalTotal,
-    });
+    setSavedData({ finalTotal, people, taxPercent, tipPercent });
     message.success("Bill saved to browser storage");
   };
 
@@ -124,70 +88,15 @@ export function useBillCalculator() {
     [subtotal, finalTotal, calculatedTotal]
   );
 
-  const columns = useMemo(
-    () => [
-      {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-        render: (_: string, record: Person) => (
-          <Input
-            placeholder="Name"
-            value={record.name}
-            onChange={(e) => updatePerson(record.key, "name", e.target.value)}
-            style={{ width: "100%" }}
-          />
-        ),
-      },
-      {
-        title: "Subtotal",
-        dataIndex: "subtotal",
-        key: "subtotal",
-        render: (_: number, record: Person) => (
-          <InputNumber
-            prefix="$"
-            min={0}
-            step={0.01}
-            value={record.subtotal}
-            onChange={(value) => updatePerson(record.key, "subtotal", value ?? 0)}
-            style={{ width: "100%" }}
-          />
-        ),
-      },
-      {
-        title: "Owes",
-        key: "owes",
-        render: (_: unknown, record: Person) => <Text strong>{formatCurrency(calculateShare(record.subtotal))}</Text>,
-      },
-      {
-        title: "",
-        key: "action",
-        width: 50,
-        render: (_: unknown, record: Person) => (
-          <Button
-            type="text"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => removePerson(record.key)}
-            disabled={people.length === 1}
-          />
-        ),
-      },
-    ],
-    [calculateShare, people.length, removePerson, updatePerson]
-  );
-
   return {
-    addPerson,
     calculatedTotal,
-    columns,
+    calculateShare,
     finalTotal,
     handleFinalTotalChange,
     handleReset,
     handleSave,
     handleTaxChange,
     handleTipChange,
-    people,
     subtotal,
     taxAmount,
     taxPercent,

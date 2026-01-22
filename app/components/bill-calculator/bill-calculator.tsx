@@ -1,28 +1,83 @@
-import { PlusOutlined, ReloadOutlined, SaveOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Divider, InputNumber, Row, Slider, Space, Table, Typography } from "antd";
+import { DeleteOutlined, PlusOutlined, ReloadOutlined, SaveOutlined } from "@ant-design/icons";
+import { Button, Card, Col, Divider, Input, InputNumber, Row, Slider, Space, Table, Typography } from "antd";
+import { useMemo } from "react";
 import { formatCurrency } from "../../utils/number";
+import type { Person } from "./types";
 import { useBillCalculator } from "./use-bill-calculator";
+import { useBillCalculatorPeople } from "./use-bill-calculator-people";
 
 const { Title, Text } = Typography;
 
 export const BillCalculatorPage = () => {
+  const { addPerson, people, removePerson, setPeople, updatePerson } = useBillCalculatorPeople();
   const {
-    addPerson,
     calculatedTotal,
-    columns,
+    calculateShare,
     finalTotal,
     handleFinalTotalChange,
     handleReset,
     handleSave,
     handleTaxChange,
     handleTipChange,
-    people,
     subtotal,
     taxAmount,
     taxPercent,
     tipAmount,
     tipPercent,
-  } = useBillCalculator();
+  } = useBillCalculator({ people, setPeople });
+
+  const columns = useMemo(
+    () => [
+      {
+        title: "Name",
+        dataIndex: "name",
+        key: "name",
+        render: (_: string, record: Person) => (
+          <Input
+            placeholder="Name"
+            value={record.name}
+            onChange={(e) => updatePerson(record.key, "name", e.target.value)}
+            style={{ width: "100%" }}
+          />
+        ),
+      },
+      {
+        title: "Subtotal",
+        dataIndex: "subtotal",
+        key: "subtotal",
+        render: (_: number, record: Person) => (
+          <InputNumber
+            prefix="$"
+            min={0}
+            step={0.01}
+            value={record.subtotal}
+            onChange={(value) => updatePerson(record.key, "subtotal", value ?? 0)}
+            style={{ width: "100%" }}
+          />
+        ),
+      },
+      {
+        title: "Owes",
+        key: "owes",
+        render: (_: unknown, record: Person) => <Text strong>{formatCurrency(calculateShare(record.subtotal))}</Text>,
+      },
+      {
+        title: "",
+        key: "action",
+        width: 50,
+        render: (_: unknown, record: Person) => (
+          <Button
+            type="text"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => removePerson(record.key)}
+            disabled={people.length === 1}
+          />
+        ),
+      },
+    ],
+    [calculateShare, people.length, removePerson, updatePerson]
+  );
 
   return (
     <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px" }}>
