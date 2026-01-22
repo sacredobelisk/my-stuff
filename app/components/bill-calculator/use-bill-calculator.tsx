@@ -1,6 +1,6 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Input, InputNumber, message, Typography } from "antd";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocalStorage } from "~/hooks/useLocalStorage";
 import { formatCurrency } from "../../utils/number";
 import type { BillData, Person } from "./types";
@@ -12,14 +12,15 @@ const DEFAULT_TIP_PERCENT = 20;
 
 const generateKey = () => Math.random().toString(36).substring(2, 9);
 
-const defaultBillData: BillData = {
+const createDefaultBillData = (): BillData => ({
   finalTotal: null,
   people: [{ key: generateKey(), name: "", subtotal: 0 }],
   taxPercent: DEFAULT_TAX_PERCENT,
   tipPercent: DEFAULT_TIP_PERCENT,
-};
+});
+
 export function useBillCalculator() {
-  const [savedData, setSavedData] = useLocalStorage<BillData>("billCalculator", defaultBillData);
+  const [savedData, setSavedData] = useLocalStorage<BillData>("billCalculator", createDefaultBillData());
 
   const [finalTotal, setFinalTotal] = useState<number | null>(savedData.finalTotal);
   const [isEditingFinalTotal, setIsEditingFinalTotal] = useState(false);
@@ -46,13 +47,15 @@ export function useBillCalculator() {
   useEffect(() => {
     if (isEditingFinalTotal && finalTotal !== null && subtotal > 0) {
       const newTipPercent = calculateTipFromFinalTotal(finalTotal);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTipPercent(Math.round(newTipPercent * 100) / 100);
     }
-  }, [finalTotal, isEditingFinalTotal, calculateTipFromFinalTotal, subtotal]);
+  }, [calculateTipFromFinalTotal, finalTotal, isEditingFinalTotal, subtotal]);
 
   // Update final total when tip/tax changes (user not editing final total)
   useEffect(() => {
     if (!isEditingFinalTotal) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFinalTotal(Math.round(calculatedTotal * 100) / 100);
     }
   }, [calculatedTotal, isEditingFinalTotal]);
@@ -61,15 +64,21 @@ export function useBillCalculator() {
     setPeople([...people, { key: generateKey(), name: "", subtotal: 0 }]);
   };
 
-  const removePerson = (key: string) => {
-    if (people.length > 1) {
-      setPeople(people.filter((p) => p.key !== key));
-    }
-  };
+  const removePerson = useCallback(
+    (key: string) => {
+      if (people.length > 1) {
+        setPeople(people.filter((p) => p.key !== key));
+      }
+    },
+    [people]
+  );
 
-  const updatePerson = (key: string, field: keyof Person, value: string | number) => {
-    setPeople(people.map((p) => (p.key === key ? { ...p, [field]: value } : p)));
-  };
+  const updatePerson = useCallback(
+    (key: string, field: keyof Person, value: string | number) => {
+      setPeople(people.map((p) => (p.key === key ? { ...p, [field]: value } : p)));
+    },
+    [people]
+  );
 
   const handleSave = () => {
     setSavedData({
@@ -105,62 +114,68 @@ export function useBillCalculator() {
   };
 
   // Calculate each person's share
-  const calculateShare = (personSubtotal: number) => {
-    if (subtotal === 0) return 0;
-    const proportion = personSubtotal / subtotal;
-    const effectiveTotal = finalTotal ?? calculatedTotal;
-    return proportion * effectiveTotal;
-  };
+  const calculateShare = useCallback(
+    (personSubtotal: number) => {
+      if (subtotal === 0) return 0;
+      const proportion = personSubtotal / subtotal;
+      const effectiveTotal = finalTotal ?? calculatedTotal;
+      return proportion * effectiveTotal;
+    },
+    [subtotal, finalTotal, calculatedTotal]
+  );
 
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      render: (_: string, record: Person) => (
-        <Input
-          placeholder="Name"
-          value={record.name}
-          onChange={(e) => updatePerson(record.key, "name", e.target.value)}
-          style={{ width: "100%" }}
-        />
-      ),
-    },
-    {
-      title: "Subtotal",
-      dataIndex: "subtotal",
-      key: "subtotal",
-      render: (_: number, record: Person) => (
-        <InputNumber
-          prefix="$"
-          min={0}
-          step={0.01}
-          value={record.subtotal}
-          onChange={(value) => updatePerson(record.key, "subtotal", value ?? 0)}
-          style={{ width: "100%" }}
-        />
-      ),
-    },
-    {
-      title: "Owes",
-      key: "owes",
-      render: (_: unknown, record: Person) => <Text strong>{formatCurrency(calculateShare(record.subtotal))}</Text>,
-    },
-    {
-      title: "",
-      key: "action",
-      width: 50,
-      render: (_: unknown, record: Person) => (
-        <Button
-          type="text"
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => removePerson(record.key)}
-          disabled={people.length === 1}
-        />
-      ),
-    },
-  ];
+  const columns = useMemo(
+    () => [
+      {
+        title: "Name",
+        dataIndex: "name",
+        key: "name",
+        render: (_: string, record: Person) => (
+          <Input
+            placeholder="Name"
+            value={record.name}
+            onChange={(e) => updatePerson(record.key, "name", e.target.value)}
+            style={{ width: "100%" }}
+          />
+        ),
+      },
+      {
+        title: "Subtotal",
+        dataIndex: "subtotal",
+        key: "subtotal",
+        render: (_: number, record: Person) => (
+          <InputNumber
+            prefix="$"
+            min={0}
+            step={0.01}
+            value={record.subtotal}
+            onChange={(value) => updatePerson(record.key, "subtotal", value ?? 0)}
+            style={{ width: "100%" }}
+          />
+        ),
+      },
+      {
+        title: "Owes",
+        key: "owes",
+        render: (_: unknown, record: Person) => <Text strong>{formatCurrency(calculateShare(record.subtotal))}</Text>,
+      },
+      {
+        title: "",
+        key: "action",
+        width: 50,
+        render: (_: unknown, record: Person) => (
+          <Button
+            type="text"
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => removePerson(record.key)}
+            disabled={people.length === 1}
+          />
+        ),
+      },
+    ],
+    [calculateShare, people.length, removePerson, updatePerson]
+  );
 
   return {
     addPerson,
