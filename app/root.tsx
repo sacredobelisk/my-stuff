@@ -1,11 +1,15 @@
-import { Layout as AntLayout } from "antd";
+import { Layout as AntLayout, Typography } from "antd";
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import type { Route } from "./+types/root";
-import { Header } from "./components/header/header";
+import { Nav } from "./components/nav/nav";
+import { RootConfig } from "./components/root-config";
+
+const { Header } = AntLayout;
+const { Title } = Typography;
 
 import "./app.css";
 
-const { Content } = AntLayout;
+const { Content, Sider } = AntLayout;
 
 export const links: Route.LinksFunction = () => [];
 
@@ -19,12 +23,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Header />
-        <Content>
-          {children}
-          <ScrollRestoration />
-          <Scripts />
-        </Content>
+        <RootConfig>
+          <AntLayout>
+            <Header>
+              <Title>Sean OBrien</Title>
+            </Header>
+            <AntLayout>
+              <Sider>
+                <Nav />
+              </Sider>
+              <Content>
+                {children}
+                <ScrollRestoration />
+                <Scripts />
+              </Content>
+            </AntLayout>
+          </AntLayout>
+        </RootConfig>
       </body>
     </html>
   );
