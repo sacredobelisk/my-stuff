@@ -6,6 +6,11 @@ header {
   }
 }
 
+aside .ant-layout-sider-zero-width-trigger {
+  --ant-layout-sider-bg: #001529;
+  top: 0 !important;
+}
+
 main {
   padding: 16px;
 

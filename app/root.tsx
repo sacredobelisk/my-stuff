@@ -29,7 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <Title>Sean OBrien</Title>
             </Header>
             <AntLayout>
-              <Sider>
+              <Sider breakpoint="md" collapsedWidth="0">
                 <Nav />
               </Sider>
               <Content>
