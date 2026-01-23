@@ -4,10 +4,6 @@ import { ConfigProvider, type ThemeConfig } from "antd";
 
 const theme: ThemeConfig = {
   components: {
-    Typography: {
-      // titleMarginBottom: 0,
-      // titleMarginTop: 0,
-    },
     Layout: {
       bodyBg: "#fff",
       paddingContentHorizontal: 240,
