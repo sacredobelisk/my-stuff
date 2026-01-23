@@ -39,7 +39,7 @@ const items: MenuItem[] = [
 
 export const Nav = ({ style }: Props) => {
   return (
-    <nav style={style}>
+    <nav aria-label="Main navigation" style={style}>
       <Menu defaultSelectedKeys={["home"]} items={items} mode="horizontal" style={{ borderBottom: "none" }} />
     </nav>
   );

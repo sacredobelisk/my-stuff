@@ -80,7 +80,7 @@ export const BillCalculatorPage = () => {
   );
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: "24px" }}>
+    <div>
       <Title level={2}>Bill Calculator</Title>
       <Text type="secondary">Split the bill equally by proportion, including tax and tip.</Text>
 
