@@ -1,9 +1,8 @@
 import { message } from "antd";
 import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { useLocalStorage } from "~/hooks/useLocalStorage";
 import type { BillData, Person } from "./types";
-import { createDefaultBillData, DEFAULT_TAX_PERCENT, DEFAULT_TIP_PERCENT } from "./utils";
+import { createDefaultBillData, DEFAULT_TAX_PERCENT, DEFAULT_TIP_PERCENT, generateKey } from "./utils";
 
 type Props = {
   people: Person[];
@@ -56,7 +55,7 @@ export function useBillCalculator({ people, setPeople }: Props) {
   };
 
   const handleReset = () => {
-    setPeople([{ key: uuidv4(), name: "", subtotal: 0 }]);
+    setPeople([{ key: generateKey(), name: "", subtotal: 0 }]);
     setTaxPercent(DEFAULT_TAX_PERCENT);
     setTipPercent(DEFAULT_TIP_PERCENT);
     setFinalTotal(null);
