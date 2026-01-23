@@ -81,7 +81,22 @@ export const BillCalculatorPage = () => {
 
   return (
     <div>
-      <Title level={2}>Bill Calculator</Title>
+      <Row align="middle" gutter={16} wrap={false}>
+        <Col flex="auto">
+          <Title level={2}>Bill Calculator</Title>
+        </Col>
+        <Col flex="none">
+          <Space>
+            <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
+              Save
+            </Button>
+            <Button icon={<ReloadOutlined />} onClick={handleReset}>
+              Reset
+            </Button>
+          </Space>
+        </Col>
+      </Row>
+
       <Text type="secondary">Split the bill equally by proportion, including tax and tip.</Text>
 
       <Divider />
@@ -197,15 +212,6 @@ export const BillCalculatorPage = () => {
           </Card>
         </Col>
       </Row>
-
-      <Space>
-        <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
-          Save
-        </Button>
-        <Button icon={<ReloadOutlined />} onClick={handleReset}>
-          Reset
-        </Button>
-      </Space>
     </div>
   );
 };

@@ -7,10 +7,10 @@ const { Title } = Typography;
 export const Header = () => (
   <AntHeader>
     <Row align="middle" gutter={16} wrap={false}>
-      <Col flex="none">
+      <Col flex="auto">
         <Title>Sean OBrien</Title>
       </Col>
-      <Col flex="auto">
+      <Col flex="none">
         <Nav />
       </Col>
     </Row>
