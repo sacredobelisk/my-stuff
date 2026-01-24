@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 jobs:
-  build-and-typecheck:
+  pr-checks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
