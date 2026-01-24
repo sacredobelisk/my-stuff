@@ -8,6 +8,7 @@ header {
 
 aside .ant-layout-sider-zero-width-trigger {
   --ant-layout-sider-bg: #001529;
+  /* eslint-disable-next-line css/no-important */
   top: 0 !important;
 }
 
