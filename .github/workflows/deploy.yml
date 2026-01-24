@@ -6,6 +6,9 @@ on:
       - main # Trigger the workflow on pushes to the main branch
   workflow_dispatch: # Allows manual triggering from the Actions tab
 
+env:
+  NODE_VERSION: "22"
+
 permissions:
   contents: read
   pages: write
@@ -20,7 +23,7 @@ jobs:
       - name: Setup Node.js (if you need to build a modern frontend project, e.g., React/Next.js)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install dependencies and build your project
         run: |
           npm install
@@ -28,7 +31,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './build/client' # Replace 'build' with your project's static file output directory (e.g., 'public', 'dist')
+          path: "./build/client" # Replace 'build' with your project's static file output directory (e.g., 'public', 'dist')
 
   deploy:
     environment:
