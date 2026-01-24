@@ -11,6 +11,10 @@ on:
 env:
   NODE_VERSION: "22"
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build-and-typecheck:
     runs-on: ubuntu-latest
