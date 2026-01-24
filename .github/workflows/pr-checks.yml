@@ -5,6 +5,11 @@ on:
     branches:
       - main
       - develop
+  merge_group:
+    types: [checks_requested]
+
+env:
+  NODE_VERSION: "22"
 
 jobs:
   build-and-typecheck:
@@ -16,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
 
       - name: Install dependencies
