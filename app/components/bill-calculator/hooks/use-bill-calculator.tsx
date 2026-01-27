@@ -1,15 +1,15 @@
-import { message } from "antd";
 import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useLocalStorage } from "~/hooks/useLocalStorage";
-import type { BillData, Person } from "./types";
-import { createDefaultBillData, DEFAULT_TAX_PERCENT, DEFAULT_TIP_PERCENT, generateKey } from "./utils";
+import type { BillData, Person } from "../configuration/types";
+import { createDefaultBillData, DEFAULT_TAX_PERCENT, DEFAULT_TIP_PERCENT, generateKey } from "../configuration/utils";
 
 type Props = {
+  onSave?: (data: BillData) => void;
   people: Person[];
   setPeople: Dispatch<SetStateAction<Person[]>>;
 };
 
-export function useBillCalculator({ people, setPeople }: Props) {
+export function useBillCalculator({ onSave, people, setPeople }: Props) {
   const [savedData, setSavedData] = useLocalStorage<BillData>("billCalculator", createDefaultBillData());
 
   const [finalTotal, setFinalTotal] = useState<number | null>(savedData.finalTotal);
@@ -51,7 +51,7 @@ export function useBillCalculator({ people, setPeople }: Props) {
 
   const handleSave = () => {
     setSavedData({ finalTotal, people, taxPercent, tipPercent });
-    message.success("Bill saved to browser storage");
+    onSave?.({ finalTotal, people, taxPercent, tipPercent });
   };
 
   const handleReset = () => {

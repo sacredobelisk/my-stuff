@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["Sider", "uuidv"]
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": ["^@mui/[^/]+$"],
+  "cSpell.words": ["isbot"]
 }

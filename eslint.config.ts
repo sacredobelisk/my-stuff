@@ -29,9 +29,11 @@ export default defineConfig([
 
     rules: {
       "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unused-vars": "warn",
       "no-empty-pattern": "warn",
+      "react-hooks/preserve-manual-memoization": "off",
+      "react/display-name": "off",
       "react/react-in-jsx-scope": "off",
-      indent: ["error", 2],
       quotes: ["error", "double"],
       semi: ["error", "always"],
     },

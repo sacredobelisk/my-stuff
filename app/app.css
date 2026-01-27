@@ -1,21 +1,8 @@
-header {
-  border-radius: 8px;
-
-  h1 {
-    margin: 0.5em 0;
-  }
+body {
+  margin: 0;
 }
 
-aside .ant-layout-sider-zero-width-trigger {
-  --ant-layout-sider-bg: #001529;
-  /* eslint-disable-next-line css/no-important */
-  top: 0 !important;
-}
-
-main {
-  padding: 16px;
-
-  h2 {
-    margin-top: 0;
-  }
+.MuiDataGrid-footerContainer,
+.MuiTablePagination-root {
+  display: none;
 }
