@@ -94,12 +94,12 @@ export const BillCalculatorPage = () => {
 
       <Stack spacing={2}>
         <Stack alignItems="center" direction="row" spacing={2}>
-          <Typography flex="auto" variant="h2">
+          <Typography sx={{ flex: "auto" }} variant="h2">
             Bill Calculator
             <Typography color="textSecondary">Split the bill equally by proportion, including tax and tip.</Typography>
           </Typography>
 
-          <Box flex="none">
+          <Box sx={{ flex: "none" }}>
             <ButtonGroup>
               <Button onClick={handleSave} startIcon={<SaveIcon />} variant="contained">
                 Save
@@ -124,19 +124,19 @@ export const BillCalculatorPage = () => {
           rows={people}
           sx={{ width: "100%" }}
         />
-        <Button onClick={addPerson} startIcon={<AddIcon />} style={{ width: "100%", marginTop: 16 }} variant="outlined">
+        <Button onClick={addPerson} startIcon={<AddIcon />} sx={{ width: "100%", mt: 2 }} variant="outlined">
           Add Person
         </Button>
 
         <Stack direction="row" spacing={2}>
-          <Card style={{ flex: 1 }}>
+          <Card sx={{ flex: 1 }}>
             <CardHeader title="Tax & Tip" />
             <CardContent>
               <Stack spacing={0.5}>
                 <Typography id="tax-slider">Tax: {taxPercent.toFixed(2)}%</Typography>
 
-                <Grid container spacing={2} alignItems="center">
-                  <Grid flex="auto">
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid size="grow">
                     <Slider
                       aria-labelledby="tax-slider"
                       max={15}
@@ -146,7 +146,7 @@ export const BillCalculatorPage = () => {
                       value={taxPercent}
                     />
                   </Grid>
-                  <Grid flex="none">
+                  <Grid>
                     <NumberField
                       aria-labelledby="tax-slider"
                       inputSx={{ width: 80 }}
@@ -163,8 +163,8 @@ export const BillCalculatorPage = () => {
               <Stack spacing={0.5}>
                 <Typography id="tip-slider">Tip: {tipPercent.toFixed(2)}%</Typography>
 
-                <Grid container spacing={2} alignItems="center">
-                  <Grid flex="auto">
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid size="grow">
                     <Slider
                       aria-labelledby="tip-slider"
                       max={50}
@@ -174,7 +174,7 @@ export const BillCalculatorPage = () => {
                       value={tipPercent}
                     />
                   </Grid>
-                  <Grid flex="none">
+                  <Grid>
                     <NumberField
                       aria-labelledby="tip-slider"
                       inputSx={{ width: 80 }}
@@ -191,28 +191,28 @@ export const BillCalculatorPage = () => {
             </CardContent>
           </Card>
 
-          <Card style={{ flex: 1 }}>
+          <Card sx={{ flex: 1 }}>
             <CardHeader title="Totals" />
             <CardContent>
               <Grid container spacing={2}>
                 <Grid size={6}>
                   <Typography>Subtotal:</Typography>
                 </Grid>
-                <Grid size={6} style={{ textAlign: "right" }}>
+                <Grid size={6} sx={{ textAlign: "right" }}>
                   <Typography>{formatCurrency(subtotal)}</Typography>
                 </Grid>
 
                 <Grid size={6}>
                   <Typography>Tax ({taxPercent.toFixed(2)}%):</Typography>
                 </Grid>
-                <Grid size={6} style={{ textAlign: "right" }}>
+                <Grid size={6} sx={{ textAlign: "right" }}>
                   <Typography>{formatCurrency(taxAmount)}</Typography>
                 </Grid>
 
                 <Grid size={6}>
                   <Typography>Tip ({tipPercent.toFixed(2)}%):</Typography>
                 </Grid>
-                <Grid size={6} style={{ textAlign: "right" }}>
+                <Grid size={6} sx={{ textAlign: "right" }}>
                   <Typography>{formatCurrency(tipAmount)}</Typography>
                 </Grid>
 
@@ -224,12 +224,11 @@ export const BillCalculatorPage = () => {
                   <Typography id="final-total">Final Total:</Typography>
                 </Grid>
 
-                <Grid size={6} style={{ textAlign: "right" }}>
+                <Grid size={6} sx={{ textAlign: "right" }}>
                   <NumberField
                     aria-labelledby="final-total"
                     min={0}
                     onValueChange={handleFinalTotalChange}
-                    prefix="$"
                     size="small"
                     step={0.01}
                     value={finalTotal ?? calculatedTotal}
@@ -237,7 +236,7 @@ export const BillCalculatorPage = () => {
                 </Grid>
               </Grid>
 
-              <Typography color="textSecondary" sx={{ marginTop: 2 }}>
+              <Typography color="textSecondary" sx={{ mt: 2 }}>
                 Edit the final total to adjust tip automatically, or adjust tax/tip to calculate the total.
               </Typography>
             </CardContent>

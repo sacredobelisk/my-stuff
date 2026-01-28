@@ -56,7 +56,6 @@ export const Nav = ({ drawerWidth, mobileOpen, onDrawerClose }: Props) => {
         ModalProps={{ keepMounted: true }}
         sx={{
           display: { xs: "block", sm: "none" },
-          // height: "100%",
           "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
         }}
       >
