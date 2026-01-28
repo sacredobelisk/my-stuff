@@ -24,7 +24,9 @@ import { useBillCalculator } from "./hooks/use-bill-calculator";
 import { useBillCalculatorPeople } from "./hooks/use-bill-calculator-people";
 
 export const BillCalculatorPage = () => {
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [errorSnackbarMessage, setErrorSnackbarMessage] = useState<string | null>();
+  const [savedSnackbarOpen, setSavedSnackbarOpen] = useState(false);
+
   const { addPerson, people, removePerson, setPeople, updatePerson } = useBillCalculatorPeople();
   const {
     calculatedTotal,
@@ -40,33 +42,38 @@ export const BillCalculatorPage = () => {
     taxPercent,
     tipAmount,
     tipPercent,
-  } = useBillCalculator({ people, onSave: () => setSnackbarOpen(true), setPeople });
+  } = useBillCalculator({ people, onSave: () => setSavedSnackbarOpen(true), setPeople });
 
   const columns: GridColDef<Person>[] = useMemo(
     () => [
       {
-        headerName: "Name",
+        editable: true,
         field: "name",
         flex: 2,
-        editable: true,
+        headerName: "Name",
       },
       {
-        headerName: "Subtotal",
-        field: "subtotal",
-        width: 100,
         editable: true,
+        field: "subtotal",
+        headerName: "Subtotal",
+        preProcessEditCellProps: (params) => {
+          const value = parseFloat(params.props.value);
+          const isValid = !isNaN(value) && value >= 0;
+          setErrorSnackbarMessage("Please enter a valid non-negative number for subtotal.");
+          return { ...params.props, error: !isValid };
+        },
+        width: 100,
         valueFormatter: (value) => formatCurrency(value),
       },
       {
-        headerName: "Owes",
         field: "owes",
-        width: 100,
+        headerName: "Owes",
         valueFormatter: (_, row) => formatCurrency(calculateShare(row.subtotal)),
+        width: 100,
       },
       {
-        headerName: "",
         field: "action",
-        width: 75,
+        headerName: "Actions",
         renderCell: ({ api, row }) => (
           <IconButton
             aria-label={`Remove ${row.name}`}
@@ -77,6 +84,7 @@ export const BillCalculatorPage = () => {
             <DeleteOutlinedIcon />
           </IconButton>
         ),
+        width: 75,
       },
     ],
     [calculateShare, removePerson]
@@ -88,8 +96,14 @@ export const BillCalculatorPage = () => {
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         autoHideDuration={10000}
         message="Bill saved to browser storage"
-        onClose={() => setSnackbarOpen(false)}
-        open={snackbarOpen}
+        onClose={() => setSavedSnackbarOpen(false)}
+        open={savedSnackbarOpen}
+      />
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        message={errorSnackbarMessage}
+        onClose={() => setErrorSnackbarMessage(null)}
+        open={!!errorSnackbarMessage}
       />
 
       <Stack spacing={2}>
@@ -120,6 +134,9 @@ export const BillCalculatorPage = () => {
           processRowUpdate={(newRow) => {
             updatePerson(newRow);
             return newRow;
+          }}
+          onProcessRowUpdateError={() => {
+            setErrorSnackbarMessage("Error updating row. Please check your input.");
           }}
           rows={people}
           sx={{ width: "100%" }}
