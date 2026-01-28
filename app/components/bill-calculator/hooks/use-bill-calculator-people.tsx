@@ -1,7 +1,7 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useLocalStorage } from "~/hooks/useLocalStorage";
-import type { BillData, Person } from "./types";
-import { createDefaultBillData, generateKey } from "./utils";
+import type { BillData, Person } from "../configuration/types";
+import { createDefaultBillData, generateKey } from "../configuration/utils";
 
 export function useBillCalculatorPeople() {
   const [savedData] = useLocalStorage<BillData>("billCalculator", createDefaultBillData());
@@ -10,18 +10,18 @@ export function useBillCalculatorPeople() {
 
   const addPerson = () => setPeople((prevPeople) => [...prevPeople, { key: generateKey(), name: "", subtotal: 0 }]);
 
-  const removePerson = useCallback((key: string) => {
+  const removePerson = (person: Person) =>
     setPeople((prevPeople) => {
       if (prevPeople.length <= 1) {
         return prevPeople;
       }
-      return prevPeople.filter((p) => p.key !== key);
+      return prevPeople.filter((p) => p.key !== person.key);
     });
-  }, []);
 
-  const updatePerson = useCallback((key: string, field: keyof Person, value: string | number) => {
-    setPeople((prevPeople) => prevPeople.map((p) => (p.key === key ? { ...p, [field]: value } : p)));
-  }, []);
+  const updatePerson = (person: Person) =>
+    setPeople((prevPeople) =>
+      prevPeople.map((p) => (p.key === person.key ? { ...person, subtotal: Number(person.subtotal) } : p))
+    );
 
   return { addPerson, people, removePerson, setPeople, updatePerson };
 }

@@ -1,17 +1,66 @@
-import { Layout as AntLayout, Typography } from "antd";
+import MenuIcon from "@mui/icons-material/Menu";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import { useState } from "react";
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
 import type { Route } from "./+types/root";
 import { Nav } from "./components/nav/nav";
-import { RootConfig } from "./components/root-config";
-
-const { Header } = AntLayout;
-const { Title } = Typography;
+import { CustomThemeProvider } from "./components/providers/custom-theme";
 
 import "./app.css";
 
-const { Content, Sider } = AntLayout;
+export const links: Route.LinksFunction = () => [
+  { href: "https://fonts.googleapis.com", rel: "preconnect" },
+  {
+    crossOrigin: "anonymous",
+    href: "https://fonts.gstatic.com",
+    rel: "preconnect",
+  },
+  {
+    href: "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap",
+    rel: "stylesheet",
+  },
+];
 
-export const links: Route.LinksFunction = () => [];
+const drawerWidth = 240;
+
+function LayoutContent({ children }: { children: React.ReactNode }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen((prev) => !prev);
+  };
+
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: "none" } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h1" noWrap>
+            Sean OBrien
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ display: "flex", flexGrow: 1 }}>
+        <Nav drawerWidth={drawerWidth} mobileOpen={mobileOpen} onDrawerClose={handleDrawerToggle} />
+        <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
+          {children}
+        </Box>
+      </Box>
+    </Box>
+  );
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -23,23 +72,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <RootConfig>
-          <AntLayout>
-            <Header>
-              <Title>Sean OBrien</Title>
-            </Header>
-            <AntLayout>
-              <Sider breakpoint="md" collapsedWidth="0">
-                <Nav />
-              </Sider>
-              <Content>
-                {children}
-                <ScrollRestoration />
-                <Scripts />
-              </Content>
-            </AntLayout>
-          </AntLayout>
-        </RootConfig>
+        <CustomThemeProvider>
+          <LayoutContent>{children}</LayoutContent>
+        </CustomThemeProvider>
+        <ScrollRestoration />
+        <Scripts />
       </body>
     </html>
   );

@@ -1,14 +1,32 @@
-import { DeleteOutlined, PlusOutlined, ReloadOutlined, SaveOutlined } from "@ant-design/icons";
-import { Button, Card, Col, Divider, Input, InputNumber, Row, Slider, Space, Table, Typography } from "antd";
-import { useMemo } from "react";
-import { formatCurrency } from "../../utils/number";
-import type { Person } from "./types";
-import { useBillCalculator } from "./use-bill-calculator";
-import { useBillCalculatorPeople } from "./use-bill-calculator-people";
-
-const { Title, Text } = Typography;
+import AddIcon from "@mui/icons-material/AddOutlined";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
+import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Slider from "@mui/material/Slider";
+import Snackbar from "@mui/material/Snackbar";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
+import { useMemo, useState } from "react";
+import NumberField from "~/components/number-field/number-field";
+import { formatCurrency } from "~/utils/number";
+import type { Person } from "./configuration/types";
+import { useBillCalculator } from "./hooks/use-bill-calculator";
+import { useBillCalculatorPeople } from "./hooks/use-bill-calculator-people";
 
 export const BillCalculatorPage = () => {
+  const [errorSnackbarMessage, setErrorSnackbarMessage] = useState<string | null>();
+  const [savedSnackbarOpen, setSavedSnackbarOpen] = useState(false);
+
   const { addPerson, people, removePerson, setPeople, updatePerson } = useBillCalculatorPeople();
   const {
     calculatedTotal,
@@ -24,194 +42,224 @@ export const BillCalculatorPage = () => {
     taxPercent,
     tipAmount,
     tipPercent,
-  } = useBillCalculator({ people, setPeople });
+  } = useBillCalculator({ people, onSave: () => setSavedSnackbarOpen(true), setPeople });
 
-  const columns = useMemo(
+  const columns: GridColDef<Person>[] = useMemo(
     () => [
       {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-        render: (_: string, record: Person) => (
-          <Input
-            placeholder="Name"
-            value={record.name}
-            onChange={(e) => updatePerson(record.key, "name", e.target.value)}
-            style={{ width: "100%" }}
-          />
-        ),
+        editable: true,
+        field: "name",
+        flex: 2,
+        headerName: "Name",
       },
       {
-        title: "Subtotal",
-        dataIndex: "subtotal",
-        key: "subtotal",
-        render: (_: number, record: Person) => (
-          <InputNumber
-            prefix="$"
-            min={0}
-            step={0.01}
-            value={record.subtotal}
-            onChange={(value) => updatePerson(record.key, "subtotal", value ?? 0)}
-            style={{ width: "100%" }}
-          />
-        ),
+        editable: true,
+        field: "subtotal",
+        headerName: "Subtotal",
+        preProcessEditCellProps: (params) => {
+          const value = parseFloat(params.props.value);
+          const isValid = !isNaN(value) && value >= 0;
+          setErrorSnackbarMessage("Please enter a valid non-negative number for subtotal.");
+          return { ...params.props, error: !isValid };
+        },
+        width: 100,
+        valueFormatter: (value) => formatCurrency(value),
       },
       {
-        title: "Owes",
-        key: "owes",
-        render: (_: unknown, record: Person) => <Text strong>{formatCurrency(calculateShare(record.subtotal))}</Text>,
+        field: "owes",
+        headerName: "Owes",
+        valueFormatter: (_, row) => formatCurrency(calculateShare(row.subtotal)),
+        width: 100,
       },
       {
-        title: "",
-        key: "action",
-        width: 50,
-        render: (_: unknown, record: Person) => (
-          <Button
-            type="text"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => removePerson(record.key)}
-            disabled={people.length === 1}
-          />
+        field: "action",
+        headerName: "Actions",
+        renderCell: ({ api, row }) => (
+          <IconButton
+            aria-label={`Remove ${row.name}`}
+            color="error"
+            disabled={api.getRowsCount() === 1}
+            onClick={() => removePerson(row)}
+          >
+            <DeleteOutlinedIcon />
+          </IconButton>
         ),
+        width: 75,
       },
     ],
-    [calculateShare, people.length, removePerson, updatePerson]
+    [calculateShare, removePerson]
   );
 
   return (
-    <div>
-      <Row align="middle" gutter={16} wrap={false}>
-        <Col flex="auto">
-          <Title level={2}>Bill Calculator</Title>
-        </Col>
-        <Col flex="none">
-          <Space>
-            <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
-              Save
-            </Button>
-            <Button icon={<ReloadOutlined />} onClick={handleReset}>
-              Reset
-            </Button>
-          </Space>
-        </Col>
-      </Row>
+    <>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        autoHideDuration={10000}
+        message="Bill saved to browser storage"
+        onClose={() => setSavedSnackbarOpen(false)}
+        open={savedSnackbarOpen}
+      />
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        message={errorSnackbarMessage}
+        onClose={() => setErrorSnackbarMessage(null)}
+        open={!!errorSnackbarMessage}
+      />
 
-      <Text type="secondary">Split the bill equally by proportion, including tax and tip.</Text>
+      <Stack spacing={2}>
+        <Stack alignItems="center" direction="row" spacing={2}>
+          <Typography sx={{ flex: "auto" }} variant="h2">
+            Bill Calculator
+            <Typography color="textSecondary">Split the bill equally by proportion, including tax and tip.</Typography>
+          </Typography>
 
-      <Divider />
+          <Box sx={{ flex: "none" }}>
+            <ButtonGroup>
+              <Button onClick={handleSave} startIcon={<SaveIcon />} variant="contained">
+                Save
+              </Button>
+              <Button onClick={handleReset} startIcon={<RestartAltOutlinedIcon />} variant="outlined">
+                Reset
+              </Button>
+            </ButtonGroup>
+          </Box>
+        </Stack>
 
-      <Card title="People" style={{ marginBottom: 16 }}>
-        <Table dataSource={people} columns={columns} pagination={false} rowKey="key" size="middle" />
-        <Button type="dashed" onClick={addPerson} icon={<PlusOutlined />} style={{ width: "100%", marginTop: 16 }}>
+        <Divider />
+
+        <DataGrid<Person>
+          columns={columns}
+          editMode="row"
+          getRowId={(person) => person.key}
+          processRowUpdate={(newRow) => {
+            updatePerson(newRow);
+            return newRow;
+          }}
+          onProcessRowUpdateError={() => {
+            setErrorSnackbarMessage("Error updating row. Please check your input.");
+          }}
+          rows={people}
+          sx={{ width: "100%" }}
+        />
+        <Button onClick={addPerson} startIcon={<AddIcon />} sx={{ width: "100%", mt: 2 }} variant="outlined">
           Add Person
         </Button>
-      </Card>
 
-      <Row gutter={16}>
-        <Col xs={24} md={12}>
-          <Card title="Tax & Tip" style={{ marginBottom: 16 }}>
-            <Row gutter={[24, 24]}>
-              <Col xs={24} md={12}>
-                <div>
-                  <Text strong>Tax: {taxPercent.toFixed(2)}%</Text>
-                  <Slider
-                    min={0}
-                    max={15}
-                    step={0.25}
-                    value={taxPercent}
-                    onChange={handleTaxChange}
-                    tooltip={{ formatter: (value) => `${value}%` }}
-                  />
-                  <Space.Compact>
-                    <InputNumber
+        <Stack direction="row" spacing={2}>
+          <Card sx={{ flex: 1 }}>
+            <CardHeader title="Tax & Tip" />
+            <CardContent>
+              <Stack spacing={0.5}>
+                <Typography id="tax-slider">Tax: {taxPercent.toFixed(2)}%</Typography>
+
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid size="grow">
+                    <Slider
+                      aria-labelledby="tax-slider"
+                      max={15}
                       min={0}
+                      onChange={(event, value) => handleTaxChange(value as number)}
+                      step={0.25}
+                      value={taxPercent}
+                    />
+                  </Grid>
+                  <Grid>
+                    <NumberField
+                      aria-labelledby="tax-slider"
+                      inputSx={{ width: 80 }}
                       max={100}
+                      min={0}
+                      onValueChange={handleTaxChange}
+                      size="small"
                       step={0.01}
                       value={taxPercent}
-                      onChange={handleTaxChange}
-                      style={{ width: "100%" }}
                     />
-                    <Space.Addon>%</Space.Addon>
-                  </Space.Compact>
-                </div>
-              </Col>
-              <Col xs={24} md={12}>
-                <div>
-                  <Text strong>Tip: {tipPercent.toFixed(2)}%</Text>
-                  <Slider
-                    min={0}
-                    max={50}
-                    step={1}
-                    value={tipPercent}
-                    onChange={handleTipChange}
-                    tooltip={{ formatter: (value) => `${value}%` }}
-                  />
+                  </Grid>
+                </Grid>
+              </Stack>
+              <Stack spacing={0.5}>
+                <Typography id="tip-slider">Tip: {tipPercent.toFixed(2)}%</Typography>
 
-                  <Space.Compact>
-                    <InputNumber
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid size="grow">
+                    <Slider
+                      aria-labelledby="tip-slider"
+                      max={50}
                       min={0}
-                      max={100}
-                      step={0.5}
+                      onChange={(event, value) => handleTipChange(value as number)}
+                      step={0.25}
                       value={tipPercent}
-                      onChange={handleTipChange}
-                      style={{ width: "100%" }}
                     />
-                    <Space.Addon>%</Space.Addon>
-                  </Space.Compact>
-                </div>
-              </Col>
-            </Row>
+                  </Grid>
+                  <Grid>
+                    <NumberField
+                      aria-labelledby="tip-slider"
+                      inputSx={{ width: 80 }}
+                      max={100}
+                      min={0}
+                      onValueChange={handleTipChange}
+                      size="small"
+                      step={0.01}
+                      value={tipPercent}
+                    />
+                  </Grid>
+                </Grid>
+              </Stack>
+            </CardContent>
           </Card>
-        </Col>
-        <Col xs={24} md={12}>
-          <Card title="Totals" style={{ marginBottom: 16 }}>
-            <Row gutter={[16, 16]}>
-              <Col span={12}>
-                <Text>Subtotal:</Text>
-              </Col>
-              <Col span={12} style={{ textAlign: "right" }}>
-                <Text>{formatCurrency(subtotal)}</Text>
-              </Col>
 
-              <Col span={12}>
-                <Text>Tax ({taxPercent.toFixed(2)}%):</Text>
-              </Col>
-              <Col span={12} style={{ textAlign: "right" }}>
-                <Text>{formatCurrency(taxAmount)}</Text>
-              </Col>
+          <Card sx={{ flex: 1 }}>
+            <CardHeader title="Totals" />
+            <CardContent>
+              <Grid container spacing={2}>
+                <Grid size={6}>
+                  <Typography>Subtotal:</Typography>
+                </Grid>
+                <Grid size={6} sx={{ textAlign: "right" }}>
+                  <Typography>{formatCurrency(subtotal)}</Typography>
+                </Grid>
 
-              <Col span={12}>
-                <Text>Tip ({tipPercent.toFixed(2)}%):</Text>
-              </Col>
-              <Col span={12} style={{ textAlign: "right" }}>
-                <Text>{formatCurrency(tipAmount)}</Text>
-              </Col>
+                <Grid size={6}>
+                  <Typography>Tax ({taxPercent.toFixed(2)}%):</Typography>
+                </Grid>
+                <Grid size={6} sx={{ textAlign: "right" }}>
+                  <Typography>{formatCurrency(taxAmount)}</Typography>
+                </Grid>
 
-              <Col span={24}>
-                <Divider style={{ margin: "8px 0" }} />
-              </Col>
+                <Grid size={6}>
+                  <Typography>Tip ({tipPercent.toFixed(2)}%):</Typography>
+                </Grid>
+                <Grid size={6} sx={{ textAlign: "right" }}>
+                  <Typography>{formatCurrency(tipAmount)}</Typography>
+                </Grid>
 
-              <Col span={12}>
-                <Text strong>Final Total:</Text>
-              </Col>
-              <Col span={12} style={{ textAlign: "right" }}>
-                <InputNumber
-                  prefix="$"
-                  min={0}
-                  step={0.01}
-                  value={finalTotal ?? calculatedTotal}
-                  onChange={handleFinalTotalChange}
-                  style={{ width: 150 }}
-                />
-              </Col>
-            </Row>
-            <Text type="secondary" style={{ display: "block", marginTop: 8 }}>
-              Edit the final total to adjust tip automatically, or adjust tax/tip to calculate the total.
-            </Text>
+                <Grid size={12}>
+                  <Divider />
+                </Grid>
+
+                <Grid size={6}>
+                  <Typography id="final-total">Final Total:</Typography>
+                </Grid>
+
+                <Grid size={6} sx={{ textAlign: "right" }}>
+                  <NumberField
+                    aria-labelledby="final-total"
+                    min={0}
+                    onValueChange={handleFinalTotalChange}
+                    size="small"
+                    step={0.01}
+                    value={finalTotal ?? calculatedTotal}
+                  />
+                </Grid>
+              </Grid>
+
+              <Typography color="textSecondary" sx={{ mt: 2 }}>
+                Edit the final total to adjust tip automatically, or adjust tax/tip to calculate the total.
+              </Typography>
+            </CardContent>
           </Card>
-        </Col>
-      </Row>
-    </div>
+        </Stack>
+      </Stack>
+    </>
   );
 };
