@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import css from "@eslint/css";
 import js from "@eslint/js";
 import json from "@eslint/json";
@@ -39,8 +40,20 @@ export default defineConfig([
     },
   },
 
-  { files: ["**/*.json"], ignores, plugins: { json }, language: "json/json", extends: ["json/recommended"] },
-  { files: ["**/*.jsonc"], ignores, plugins: { json }, language: "json/jsonc", extends: ["json/recommended"] },
+  {
+    files: ["**/*.json"],
+    ignores,
+    plugins: { json: json as any },
+    language: "json/json",
+    extends: ["json/recommended"],
+  },
+  {
+    files: ["**/*.jsonc"],
+    ignores,
+    plugins: { json: json as any },
+    language: "json/jsonc",
+    extends: ["json/recommended"],
+  },
   { files: ["**/*.css"], ignores, plugins: { css }, language: "css/css", extends: ["css/recommended"] },
 
   // turn off some rules for react-router generated files
