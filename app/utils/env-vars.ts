@@ -3,7 +3,7 @@ const getOrThrowIfNotFound = (name: string): string => {
   if (!variable) {
     throw new Error(`Environment variable ${name} not found`);
   }
-  return variable.toString();
+  return variable;
 };
 
 interface EnvVariable {
