@@ -1,7 +1,7 @@
 const getOrThrowIfNotFound = (name: string): string => {
   const variable = import.meta.env[`VITE_${name}`];
   if (!variable) {
-    throw new Error(`Environment variable ${name} not found`);
+    throw new Error(`Environment variable VITE_${name} not found`);
   }
   return variable;
 };
