@@ -68,7 +68,7 @@ Use `~/` to import from the `app/` directory:
 ```typescript
 import { useLocalStorage } from "~/hooks/useLocalStorage";
 import { formatCurrency } from "~/helpers/number";
-import { getEnvVar } from "~/utils/env-vars";
+import { PROCESS_ENVS } from "~/utils/env-vars";
 ```
 
 ## Adding New Routes

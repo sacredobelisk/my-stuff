@@ -11,6 +11,7 @@ import { Nav } from "./components/nav/nav";
 import { CustomThemeProvider } from "./components/providers/custom-theme";
 
 import "./app.css";
+import { PROCESS_ENVS } from "./utils/env-vars";
 
 export const links: Route.LinksFunction = () => [
   { href: "https://fonts.googleapis.com", rel: "preconnect" },
@@ -28,6 +29,8 @@ export const links: Route.LinksFunction = () => [
 const drawerWidth = 240;
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
+  console.log("token test", PROCESS_ENVS.BGA_AUTH_TOKEN);
+
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {

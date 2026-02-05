@@ -10,6 +10,6 @@ interface EnvVariable {
   BGA_AUTH_TOKEN: string;
 }
 
-export const getEnvVar: EnvVariable = {
+export const PROCESS_ENVS: EnvVariable = {
   BGA_AUTH_TOKEN: getOrThrowIfNotFound("BGA_AUTH_TOKEN"),
 };
