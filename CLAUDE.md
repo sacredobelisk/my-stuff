@@ -33,7 +33,7 @@ app/
 │   ├── nav/             # Navigation drawer
 │   ├── number-field/    # Reusable number input
 │   └── providers/       # Theme and context providers
-├── heloers/             # Shared helpers
+├── helpers/             # Shared helpers
 ├── hooks/               # Shared custom hooks
 ├── routes/              # Page components (file-based routing)
 ├── utils/               # Shared utilities
