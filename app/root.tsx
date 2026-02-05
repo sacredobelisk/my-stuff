@@ -29,7 +29,7 @@ export const links: Route.LinksFunction = () => [
 const drawerWidth = 240;
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
-  console.log("token test", PROCESS_ENVS.BGA_AUTH_TOKEN);
+  console.log("BGA_AUTH_TOKEN", PROCESS_ENVS.BGA_AUTH_TOKEN);
 
   const [mobileOpen, setMobileOpen] = useState(false);
 
