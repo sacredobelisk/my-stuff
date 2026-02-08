@@ -4,11 +4,11 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import { type PropsWithChildren, useState } from "react";
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { Nav } from "~/components/nav/nav";
+import { GlobalProviders } from "~/components/providers";
 import type { Route } from "./+types/root";
-import { Nav } from "./components/nav/nav";
-import { CustomThemeProvider } from "./components/providers/custom-theme";
 
 import "./app.css";
 
@@ -27,7 +27,7 @@ export const links: Route.LinksFunction = () => [
 
 const drawerWidth = 240;
 
-function LayoutContent({ children }: { children: React.ReactNode }) {
+function LayoutContent({ children }: PropsWithChildren) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -72,9 +72,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <CustomThemeProvider>
+        <GlobalProviders>
           <LayoutContent>{children}</LayoutContent>
-        </CustomThemeProvider>
+        </GlobalProviders>
         <ScrollRestoration />
         <Scripts />
       </body>
