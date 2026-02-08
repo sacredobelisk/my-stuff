@@ -26,6 +26,7 @@ Live at: `sean-obrien.net`
 
 ```
 app/
+├── api/                 # api files
 ├── components/          # Feature-based component folders
 │   ├── bill-calculator/ # Bill splitting feature
 │   │   ├── configuration/  # Types and utilities

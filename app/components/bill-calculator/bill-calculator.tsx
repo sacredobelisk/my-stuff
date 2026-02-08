@@ -18,7 +18,7 @@ import Typography from "@mui/material/Typography";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { useMemo, useState } from "react";
 import NumberField from "~/components/number-field/number-field";
-import { formatCurrency } from "~/helpers/number";
+import { formatCurrency } from "~/helpers/numbers";
 import type { Person } from "./configuration/types";
 import { useBillCalculator } from "./hooks/use-bill-calculator";
 import { useBillCalculatorPeople } from "./hooks/use-bill-calculator-people";

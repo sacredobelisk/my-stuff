@@ -1,0 +1,15 @@
+const ERROR_MESSAGES: Record<number, string> = {
+  400: "Bad Request: The server could not understand the request.",
+  401: "Unauthorized: Authentication is required.",
+  403: "Forbidden: You do not have permission to access this resource.",
+  404: "Not Found: The requested resource could not be found.",
+  405: "Method Not Allowed: The HTTP method is not supported for this resource.",
+  408: "Request Timeout: The server timed out waiting for the request.",
+  409: "Conflict: The request conflicts with the current state of the resource.",
+  422: "Unprocessable Entity: The request was well-formed but contains semantic errors.",
+  429: "Too Many Requests: You have exceeded the rate limit.",
+  500: "Internal Server Error: The server encountered an unexpected condition.",
+  502: "Bad Gateway: The server received an invalid response from an upstream server.",
+  503: "Service Unavailable: The server is temporarily unable to handle the request.",
+  504: "Gateway Timeout: The upstream server failed to respond in time.",
+};
