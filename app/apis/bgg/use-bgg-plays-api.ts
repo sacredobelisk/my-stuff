@@ -19,11 +19,8 @@ type Options = CustomQueryOptions<BggPlaysResponse, Error, BggPlay[], QueryKey>;
 
 const uri = `${BASE_BGG_API_URL}/plays`;
 
-export const useBggPlaysApi = (params: Params, { enabled = true, ...options }: Options = {}) => {
+export const useBggPlaysApi = ({ page = 1, ...restParams }: Params, { enabled = true, ...options }: Options = {}) => {
   const { get } = useApi();
-
-  const { page = 1, ...restParams } = params;
-
   return useQuery({
     queryFn: ({ signal }) =>
       get<BggPlaysResponse>(uri, {
@@ -32,8 +29,14 @@ export const useBggPlaysApi = (params: Params, { enabled = true, ...options }: O
         responseType: "xmlToJson",
         signal,
       }),
-    queryKey: [uri, params],
-    select: (data) => data.plays?.play ?? [],
+    queryKey: [uri, { page, ...restParams }],
+    select: (data) => {
+      const plays = data.plays?.play;
+      if (!plays) {
+        return [];
+      }
+      return Array.isArray(plays) ? plays : [plays];
+    },
     ...options,
     enabled,
   });

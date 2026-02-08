@@ -1,5 +1,6 @@
 import type { DefaultError, QueryKey, UseQueryOptions } from "@tanstack/react-query";
 import type { PartialProperty } from "../../utils/types";
+import { ERROR_MESSAGES } from "./utils";
 
 export type ResponseType = "blob" | "json" | "text" | "xml" | "xmlToJson";
 

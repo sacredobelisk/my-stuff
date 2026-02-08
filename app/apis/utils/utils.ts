@@ -1,4 +1,4 @@
-const ERROR_MESSAGES: Record<number, string> = {
+export const ERROR_MESSAGES: Record<number, string> = {
   400: "Bad Request: The server could not understand the request.",
   401: "Unauthorized: Authentication is required.",
   403: "Forbidden: You do not have permission to access this resource.",

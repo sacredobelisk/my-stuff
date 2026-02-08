@@ -40,7 +40,7 @@ export const LastPlays = () => {
             .map((_, index) => <Skeleton height={35} key={index} />)}
         {isSuccess && (
           <List>
-            {plays
+            {[...plays]
               .sort(playSort)
               .slice(0, PLAY_COUNT)
               .map((play) => (

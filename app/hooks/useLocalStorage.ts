@@ -6,10 +6,7 @@ import { useEffect, useState } from "react";
  * @param initialValue - The initial value if no value exists in localStorage
  * @returns A stateful value and a function to update it
  */
-export function useLocalStorage<T>(
-  key: string,
-  initialValue: T,
-): [T, (value: T | ((prev: T) => T)) => void] {
+export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((prev: T) => T)) => void] {
   // Get from local storage then parse stored json or return initialValue
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === "undefined") {
@@ -19,7 +16,7 @@ export function useLocalStorage<T>(
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
+      window.console.error(`Error reading localStorage key "${key}":`, error);
       return initialValue;
     }
   });
@@ -29,8 +26,7 @@ export function useLocalStorage<T>(
   const setValue = (value: T | ((prev: T) => T)) => {
     try {
       // Allow value to be a function so we have same API as useState
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
 
       // Save state
       setStoredValue(valueToStore);
@@ -40,7 +36,7 @@ export function useLocalStorage<T>(
         window.localStorage.setItem(key, JSON.stringify(valueToStore));
       }
     } catch (error) {
-      console.warn(`Error setting localStorage key "${key}":`, error);
+      window.console.error(`Error setting localStorage key "${key}":`, error);
     }
   };
 
@@ -51,10 +47,7 @@ export function useLocalStorage<T>(
         try {
           setStoredValue(JSON.parse(e.newValue));
         } catch (error) {
-          console.warn(
-            `Error parsing localStorage change for key "${key}":`,
-            error,
-          );
+          window.console.error(`Error parsing localStorage change for key "${key}":`, error);
         }
       }
     };
