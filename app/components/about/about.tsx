@@ -2,7 +2,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { LastPlays } from "../bgg/last-plays/last-plays";
 
-export function About() {
+export function AboutPage() {
   return (
     <Stack spacing={2}>
       <Typography>
