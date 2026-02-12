@@ -1,5 +1,6 @@
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
+import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -18,6 +19,7 @@ type Props = {
 const navItems = [
   { icon: <HomeOutlinedIcon />, label: "Home", to: "/" },
   { icon: <ReceiptLongOutlinedIcon />, label: "Bill Calculator", to: "/bill-calculator" },
+  { icon: <WorkOutlineOutlinedIcon />, label: "Resume", to: "/resume" },
 ];
 
 const DrawerContent = ({ onItemClick }: { onItemClick?: () => void }) => (

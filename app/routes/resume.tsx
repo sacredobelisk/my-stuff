@@ -1,10 +1,10 @@
-import { AboutPage } from "../components/about/about";
-import type { Route } from "./+types/home";
+import { ResumePage } from "../components/resume/resume";
+import type { Route } from "./+types/resume";
 
 export function meta({}: Route.MetaArgs) {
-  const title = "About - Sean OBrien";
+  const title = "Resume - Sean OBrien";
   const description =
-    "Learn about Sean OBrien, a software engineer based outside of Philadelphia specializing in React, JavaScript, and TypeScript.";
+    "View the professional resume of Sean OBrien, a software engineer specializing in React, JavaScript, and TypeScript.";
 
   return [
     { title },
@@ -12,13 +12,13 @@ export function meta({}: Route.MetaArgs) {
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:type", content: "website" },
-    { property: "og:url", content: "https://www.sean-obrien.net" },
+    { property: "og:url", content: "https://www.sean-obrien.net/resume" },
     { name: "twitter:card", content: "summary" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
   ];
 }
 
-export default function Home() {
-  return <AboutPage />;
+export default function Resume() {
+  return <ResumePage />;
 }

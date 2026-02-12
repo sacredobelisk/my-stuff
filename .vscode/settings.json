@@ -1,5 +1,16 @@
 {
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "json", "jsonc"],
   "typescript.preferences.autoImportSpecifierExcludeRegexes": ["^@mui/[^/]+$"],
-  "cSpell.words": ["isbot", "joda", "maxdate", "mindate", "nowinstats", "objecttype", "obrien", "startposition"]
+  "cSpell.words": [
+    "Aéropostale",
+    "isbot",
+    "joda",
+    "maxdate",
+    "mindate",
+    "nowinstats",
+    "objecttype",
+    "obrien",
+    "Smuckers",
+    "startposition"
+  ]
 }

@@ -9,7 +9,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import type { BggPlay } from "~/apis/bgg/types";
 import { useBggPlaysApi } from "~/apis/bgg/use-bgg-plays-api";
-import { MDY } from "~/helpers/dates";
+import { MD } from "~/helpers/dates";
 
 const PLAY_COUNT = 5;
 
@@ -47,7 +47,7 @@ export const LastPlays = () => {
                 <ListItem key={play.id} sx={{ display: "flex" }}>
                   <Typography sx={{ flex: "auto", fontWeight: "bold" }}>{play.item.name}</Typography>
 
-                  <Typography>{LocalDate.parse(play.date).format(MDY)}</Typography>
+                  <Typography>{LocalDate.parse(play.date).format(MD)}</Typography>
                 </ListItem>
               ))}
           </List>
