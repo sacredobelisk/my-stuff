@@ -19,7 +19,7 @@ export const Job = ({ children, company, dates, location, title }: Props) => (
         {title}
       </Typography>
       <Typography>
-        {dates.start.format(MY)} - {dates.end ? dates.end?.format(MY) : "Present"}
+        {dates.start.format(MY)} - {dates.end ? dates.end.format(MY) : "Present"}
       </Typography>
     </Box>
 
