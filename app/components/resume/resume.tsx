@@ -1,4 +1,4 @@
-import { LocalDate } from "@js-joda/core";
+import { LocalDate, Year } from "@js-joda/core";
 import Link from "@mui/material/Link";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -7,11 +7,9 @@ import Typography from "@mui/material/Typography";
 import { Job } from "./components/job";
 import { ResumeSection } from "./components/resume-section";
 
-const calculateYearsSinceFirstJob = () => {
-  const birthDate = LocalDate.of(2000, 12, 17);
-  const today = LocalDate.now();
-  return today.year() - birthDate.year();
-};
+const comcastStartDate = LocalDate.of(2000, 12, 7);
+
+const calculateYearsSinceFirstJob = () => Year.now().value() - comcastStartDate.year();
 
 export const ResumePage = () => {
   return (
@@ -160,7 +158,7 @@ export const ResumePage = () => {
 
           <Job
             company="Comcast"
-            dates={{ start: LocalDate.of(2000, 12, 20), end: LocalDate.of(2007, 7, 13) }}
+            dates={{ start: comcastStartDate, end: LocalDate.of(2007, 7, 13) }}
             title="Software Engineer"
           >
             <Typography>
