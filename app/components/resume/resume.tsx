@@ -26,7 +26,7 @@ export const ResumePage = () => {
 
           <Typography>
             On the back end, I have 6 years of experience in the analysis, design, development, administration, and
-            documentation of enterprise-level business applications using Java. I am well-versed in ObjectOriented
+            documentation of enterprise-level business applications using Java. I am well-versed in Object-Oriented
             Analysis and Design (OOA&D), with practical knowledge of design patterns including Singleton and Factory.
           </Typography>
         </Stack>
@@ -52,7 +52,7 @@ export const ResumePage = () => {
       <ResumeSection title="Personal Projects">
         <List sx={{ m: 0 }} disablePadding>
           <ListItem disablePadding>
-            <Link href="https://www.allisonweinreb.com/" rel="noopener" target="_blank" variant="body1">
+            <Link href="https://www.allisonweinreb.com/" rel="noopener noreferrer" target="_blank" variant="body1">
               Allison O&apos;Brien
             </Link>
             <Typography>&nbsp;- A personal website showcasing Ally&apos;s portfolio and projects.</Typography>
