@@ -20,9 +20,9 @@
     "@mui/x-data-grid": "^8.27.0",
     "@react-router/node": "7.13.0",
     "@react-router/serve": "7.13.0",
-    "@tanstack/react-query": "^5.90.20",
-    "fast-xml-parser": "^5.3.4",
-    "isbot": "^5.1.33",
+    "@tanstack/react-query": "^5.90.21",
+    "fast-xml-parser": "^5.3.5",
+    "isbot": "^5.1.35",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router": "7.13.0",
@@ -31,11 +31,11 @@
   "devDependencies": {
     "@eslint/css": "^0.14.1",
     "@eslint/js": "^9.39.2",
-    "@eslint/json": "^1.0.0",
+    "@eslint/json": "^1.0.1",
     "@react-router/dev": "7.13.0",
     "@tanstack/eslint-plugin-query": "^5.91.4",
-    "@types/node": "^25.2.0",
-    "@types/react": "^19.2.11",
+    "@types/node": "^25.2.3",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
@@ -44,9 +44,9 @@
     "jiti": "^2.6.1",
     "prettier": "^3.8.1",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.54.0",
+    "typescript-eslint": "^8.55.0",
     "vite": "^7.1.7",
     "vite-plugin-devtools-json": "^1.0.0",
-    "vite-tsconfig-paths": "^6.0.5"
+    "vite-tsconfig-paths": "^6.1.1"
   }
 }
