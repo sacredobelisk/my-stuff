@@ -34,7 +34,7 @@ export const useBggPlaysApi = ({ page = 1, ...restParams }: Params, { enabled = 
     queryFn: async ({ signal }) => {
       const response = await get<BggPlaysResponse>(uri, {
         headers: BGG_AUTH_HEADER,
-        queryParams: { page: 1, ...restParams },
+        queryParams: { page: page === "ALL" ? 1 : page, ...restParams },
         responseType: "xmlToJson",
         signal,
       });
@@ -47,20 +47,25 @@ export const useBggPlaysApi = ({ page = 1, ...restParams }: Params, { enabled = 
         return response;
       }
 
-      const promiseArray: Promise<BggPlaysResponse>[] = [];
-
-      for (let currentPage = 2; currentPage <= Math.ceil(totalPlays / 100); currentPage++) {
-        promiseArray.push(
-          get<BggPlaysResponse>(uri, {
-            headers: BGG_AUTH_HEADER,
-            queryParams: { page: currentPage, ...restParams },
-            responseType: "xmlToJson",
-            signal,
-          })
-        );
+      const totalPages = Math.ceil(totalPlays / 100);
+      const responses: BggPlaysResponse[] = [response];
+      const BATCH_SIZE = 5;
+      let currentPage = 2;
+      while (currentPage <= totalPages) {
+        const batchPromises: Promise<BggPlaysResponse>[] = [];
+        for (let i = 0; i < BATCH_SIZE && currentPage <= totalPages; i++, currentPage++) {
+          batchPromises.push(
+            get<BggPlaysResponse>(uri, {
+              headers: BGG_AUTH_HEADER,
+              queryParams: { page: currentPage, ...restParams },
+              responseType: "xmlToJson",
+              signal,
+            })
+          );
+        }
+        const batchResponses = await Promise.all(batchPromises);
+        responses.push(...batchResponses);
       }
-
-      const responses = [response, ...(await Promise.all(promiseArray))];
 
       const allPlays: BggPlay[] = responses.reduce((acc, current) => {
         const plays = current.plays?.play;

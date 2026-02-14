@@ -1,12 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type PropsWithChildren } from "react";
-interface MyError extends Error {
-  status?: number;
-}
+import type { ApiError } from "~/apis/utils/types";
 
 const RETRYABLE_STATUS_CODES = [408, 500, 502, 503, 504];
 
-const isRetryableError = (error: unknown): error is MyError => {
+const isRetryableError = (error: unknown): error is ApiError => {
   return (
     typeof error === "object" &&
     error !== null &&

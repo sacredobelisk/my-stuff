@@ -1,20 +1,19 @@
 import { LocalDate, Year } from "@js-joda/core";
-import {
-  Button,
-  ButtonGroup,
-  Paper,
-  Skeleton,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import Paper from "@mui/material/Paper";
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import { useMemo, useState } from "react";
 import { useBggPlaysApi } from "~/apis/bgg/use-bgg-plays-api";
 
+const START_YEAR = 2020;
 const MAX_PLAYS = 10;
 
 export const TenByTenPage = () => {
@@ -61,15 +60,15 @@ export const TenByTenPage = () => {
   return (
     <Stack spacing={2}>
       <ButtonGroup aria-label="Years" variant="outlined" sx={{ alignSelf: "center" }}>
-        {Array(Year.now().value() - 2020 + 1)
+        {Array(Year.now().value() - START_YEAR + 1)
           .fill(0)
           .map((_, index) => (
             <Button
               key={index}
-              onClick={() => setYear(2020 + index)}
-              variant={year === 2020 + index ? "contained" : "outlined"}
+              onClick={() => setYear(START_YEAR + index)}
+              variant={year === START_YEAR + index ? "contained" : "outlined"}
             >
-              {2020 + index}
+              {START_YEAR + index}
             </Button>
           ))}
       </ButtonGroup>
@@ -80,6 +79,7 @@ export const TenByTenPage = () => {
       {isSuccess && (
         <TableContainer component={Paper} sx={{ maxWidth: 960 }}>
           <Table size="small">
+            <caption>Top 10 Games Played in {year}</caption>
             <TableHead>
               <TableRow>
                 <TableCell>Game</TableCell>
@@ -91,16 +91,24 @@ export const TenByTenPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {topTenPlays.map((entry) => (
-                <TableRow key={entry.name}>
-                  <TableCell>{entry.name}</TableCell>
-                  {playColumns.map((count) => (
-                    <TableCell align="center" key={`${entry.name}-${count}`}>
-                      {count <= Math.min(entry.totalPlays, MAX_PLAYS) ? "X" : ""}
-                    </TableCell>
-                  ))}
+              {topTenPlays.length === 0 ? (
+                <TableRow>
+                  <TableCell align="center" colSpan={playColumns.length + 1}>
+                    No games were played in {year}.
+                  </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                topTenPlays.map((entry) => (
+                  <TableRow key={entry.name}>
+                    <TableCell>{entry.name}</TableCell>
+                    {playColumns.map((count) => (
+                      <TableCell align="center" key={`${entry.name}-${count}`}>
+                        {count <= Math.min(entry.totalPlays, MAX_PLAYS) ? "X" : ""}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
