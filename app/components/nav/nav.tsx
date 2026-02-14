@@ -1,3 +1,4 @@
+import CasinoOutlinedIcon from "@mui/icons-material/CasinoOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
@@ -20,6 +21,7 @@ const navItems = [
   { icon: <HomeOutlinedIcon />, label: "Home", to: "/" },
   { icon: <ReceiptLongOutlinedIcon />, label: "Bill Calculator", to: "/bill-calculator" },
   { icon: <WorkOutlineOutlinedIcon />, label: "Resume", to: "/resume" },
+  { icon: <CasinoOutlinedIcon />, label: "Board Game 10x10", to: "/10x10" },
 ];
 
 const DrawerContent = ({ onItemClick }: { onItemClick?: () => void }) => (

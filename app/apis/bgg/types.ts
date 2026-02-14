@@ -10,6 +10,18 @@ interface BggPlayer {
   win: number;
 }
 
+interface BssStatus {
+  fortrade: number;
+  lastmodified: string;
+  preordered: number;
+  prevowned: number;
+  own: number;
+  want: number;
+  wanttobuy: number;
+  wanttoplay: number;
+  wishlist: number;
+}
+
 export interface BggPlay {
   item: {
     subtypes: {
@@ -33,6 +45,29 @@ export interface BggPlay {
   location: string;
 }
 
+export interface BggCollectionItem {
+  collid: number;
+  image: string;
+  name: { sortindex: number; "#text": string };
+  numplays: number;
+  objectid: number;
+  objecttype: string;
+  status: BssStatus;
+  subtype: string;
+  thumbnail: string;
+  yearpublished: number;
+}
+
+export interface BggCollectionResponse {
+  items: { item: BggCollectionItem[] };
+}
 export interface BggPlaysResponse {
-  plays: { play: BggPlay[] };
+  plays: {
+    page: number;
+    play: BggPlay[];
+    termsofuse: string;
+    total: number;
+    userid: number;
+    username: string;
+  };
 }
