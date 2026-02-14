@@ -10,7 +10,7 @@ interface BggPlayer {
   win: number;
 }
 
-interface BssStatus {
+interface BggStatus {
   fortrade: number;
   lastmodified: string;
   preordered: number;
@@ -52,7 +52,7 @@ export interface BggCollectionItem {
   numplays: number;
   objectid: number;
   objecttype: string;
-  status: BssStatus;
+  status: BggStatus;
   subtype: string;
   thumbnail: string;
   yearpublished: number;

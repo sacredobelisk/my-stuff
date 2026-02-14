@@ -6,11 +6,21 @@ interface MyError extends Error {
 
 const RETRYABLE_STATUS_CODES = [408, 500, 502, 503, 504];
 
+const isRetryableError = (error: unknown): error is MyError => {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "status" in error &&
+    typeof (error as { status?: unknown }).status === "number"
+  );
+};
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      retry: (failureCount, error: MyError) => RETRYABLE_STATUS_CODES.includes(error.status ?? 0) && failureCount < 3,
+      retry: (failureCount, error: unknown) =>
+        isRetryableError(error) && RETRYABLE_STATUS_CODES.includes(error.status ?? 0) && failureCount < 3,
     },
   },
 });

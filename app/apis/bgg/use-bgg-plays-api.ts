@@ -71,7 +71,7 @@ export const useBggPlaysApi = ({ page = 1, ...restParams }: Params, { enabled = 
         return [...acc, ...playsArray];
       }, [] as BggPlay[]);
 
-      return { ...response, plays: { play: allPlays } } as BggPlaysResponse;
+      return { ...response, plays: { ...(response.plays ?? {}), play: allPlays } };
     },
     queryKey: [uri, { page, ...restParams }],
     select: (data) => {
