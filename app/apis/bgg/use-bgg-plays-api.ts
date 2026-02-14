@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useApi } from "../hooks/use-api/use-api";
 import type { CustomQueryOptions } from "../utils/types";
 import type { BggPlay, BggPlaysResponse } from "./types";
-import { BASE_BGG_API_URL, BGG_AUTH_HEADER } from "./utils";
+import { BASE_BGG_API_URL, BGG_AUTH_HEADER, BGG_PAGE_SIZE } from "./utils";
 
 type Params = {
   id?: string;
@@ -47,7 +47,7 @@ export const useBggPlaysApi = ({ page = 1, ...restParams }: Params, { enabled = 
         return response;
       }
 
-      const totalPages = Math.ceil(totalPlays / 100);
+      const totalPages = Math.ceil(totalPlays / BGG_PAGE_SIZE);
       const responses: BggPlaysResponse[] = [response];
       const BATCH_SIZE = 5;
       let currentPage = 2;

@@ -63,11 +63,11 @@ export interface BggCollectionResponse {
 }
 export interface BggPlaysResponse {
   plays: {
-    page: number;
-    play: BggPlay[];
-    termsofuse: string;
-    total: number;
-    userid: number;
-    username: string;
+    page?: number;
+    play?: BggPlay[];
+    termsofuse?: string;
+    total?: number;
+    userid?: number;
+    username?: string;
   };
 }

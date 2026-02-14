@@ -18,7 +18,7 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: (failureCount, error: unknown) =>
-        isRetryableError(error) && RETRYABLE_STATUS_CODES.includes(error.status ?? 0) && failureCount < 3,
+        isRetryableError(error) && RETRYABLE_STATUS_CODES.includes(error.status) && failureCount < 3,
     },
   },
 });
