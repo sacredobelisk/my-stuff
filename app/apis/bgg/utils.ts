@@ -5,3 +5,5 @@ export const BGG_AUTH_HEADER = {
 };
 
 export const BASE_BGG_API_URL = "https://boardgamegeek.com/xmlapi2";
+
+export const BGG_PAGE_SIZE = 100;

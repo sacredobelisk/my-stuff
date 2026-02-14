@@ -1,5 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+// import { HighestRated } from "../bgg/highest-rated/highest-rated";
 import { LastPlays } from "../bgg/last-plays/last-plays";
 
 export function AboutPage() {
@@ -11,6 +12,7 @@ export function AboutPage() {
       </Typography>
 
       <LastPlays />
+      {/* <HighestRated /> */}
     </Stack>
   );
 }
