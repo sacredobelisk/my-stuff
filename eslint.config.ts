@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import css from "@eslint/css";
 import js from "@eslint/js";
 import json from "@eslint/json";
@@ -9,10 +8,11 @@ import { defineConfig } from "eslint/config";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
+const ignores = ["**/build/**", "**/node_modules/**", "**/.react-router/**/*.ts", "package-lock.json"];
 const jsFiles = ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"];
 
 export default defineConfig([
-  { ignores: ["**/build/**", "**/node_modules/**", "package-lock.json"] },
+  { ignores },
   {
     files: jsFiles,
     plugins: { js },
@@ -35,19 +35,9 @@ export default defineConfig([
   { ...pluginReact.configs.flat.recommended, files: jsFiles },
   { ...reactHooks.configs.flat.recommended, files: jsFiles },
 
-  {
-    files: ["**/*.json"],
-    plugins: { json: json as any },
-    language: "json/json",
-    extends: ["json/recommended"],
-  },
-  {
-    files: ["**/*.jsonc"],
-    plugins: { json: json as any },
-    language: "json/jsonc",
-    extends: ["json/recommended"],
-  },
-  { files: ["**/*.css"], plugins: { css: css as any }, language: "css/css", extends: ["css/recommended"] },
+  { files: ["**/*.json"], ...json.configs.recommended, language: "json/json" },
+  { files: ["**/*.jsonc"], ...json.configs.recommended, language: "json/jsonc" },
+  { files: ["**/*.css"], ...css.configs.recommended, language: "css/css" },
 
   {
     rules: {
@@ -60,16 +50,6 @@ export default defineConfig([
       "react/react-in-jsx-scope": "off",
       quotes: ["error", "double"],
       semi: ["error", "always"],
-    },
-  },
-
-  // turn off some rules for react-router generated files
-  {
-    files: ["**/.react-router/**/*.ts"],
-    rules: {
-      semi: "off",
-      "@typescript-eslint/no-empty-object-type": "off",
-      "@typescript-eslint/no-namespace": "off",
     },
   },
 
