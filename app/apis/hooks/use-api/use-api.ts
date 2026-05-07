@@ -3,7 +3,9 @@ import { ApiError, type RequestOptions, type UseApiOptions } from "../../utils/t
 import { parseResponse } from "./build-response";
 import { buildUrl } from "./build-url";
 
-export const useApi = (options: UseApiOptions = {}) => {
+const DEFAULT_USE_API_OPTIONS: UseApiOptions = {};
+
+export const useApi = (options: UseApiOptions = DEFAULT_USE_API_OPTIONS) => {
   return useMemo(() => {
     async function baseFetch<T>(
       url: string,
