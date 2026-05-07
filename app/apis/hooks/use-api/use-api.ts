@@ -1,12 +1,9 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { ApiError, type RequestOptions, type UseApiOptions } from "../../utils/types";
 import { parseResponse } from "./build-response";
 import { buildUrl } from "./build-url";
 
 export const useApi = (options: UseApiOptions = {}) => {
-  const optionsRef = useRef(options);
-  optionsRef.current = options;
-
   return useMemo(() => {
     async function baseFetch<T>(
       url: string,
@@ -14,7 +11,7 @@ export const useApi = (options: UseApiOptions = {}) => {
       body?: unknown,
       requestOptions: RequestOptions = {}
     ): Promise<T> {
-      const { defaultHeaders = {}, onError } = optionsRef.current;
+      const { defaultHeaders = {}, onError } = options;
       const {
         headers: requestHeaders,
         responseType = "json",
@@ -81,5 +78,5 @@ export const useApi = (options: UseApiOptions = {}) => {
     };
 
     return { del, get, patch, post, put };
-  }, []);
+  }, [options]);
 };

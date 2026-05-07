@@ -9,11 +9,12 @@ import { defineConfig } from "eslint/config";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-const ignores = ["**/build/**", "**/node_modules/**", "package-lock.json"];
+const jsFiles = ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"];
 
 export default defineConfig([
+  { ignores: ["**/build/**", "**/node_modules/**", "package-lock.json"] },
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    files: jsFiles,
     plugins: { js },
     extends: [
       "js/recommended",
@@ -22,14 +23,33 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       tanstack.configs["flat/recommended"],
     ],
-    ignores,
     languageOptions: { globals: globals.browser },
     settings: {
       react: {
         version: "detect",
       },
     },
+  },
 
+  tseslint.configs.recommended,
+  { ...pluginReact.configs.flat.recommended, files: jsFiles },
+  { ...reactHooks.configs.flat.recommended, files: jsFiles },
+
+  {
+    files: ["**/*.json"],
+    plugins: { json: json as any },
+    language: "json/json",
+    extends: ["json/recommended"],
+  },
+  {
+    files: ["**/*.jsonc"],
+    plugins: { json: json as any },
+    language: "json/jsonc",
+    extends: ["json/recommended"],
+  },
+  { files: ["**/*.css"], plugins: { css: css as any }, language: "css/css", extends: ["css/recommended"] },
+
+  {
     rules: {
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unused-vars": "warn",
@@ -42,22 +62,6 @@ export default defineConfig([
       semi: ["error", "always"],
     },
   },
-
-  {
-    files: ["**/*.json"],
-    ignores,
-    plugins: { json: json as any },
-    language: "json/json",
-    extends: ["json/recommended"],
-  },
-  {
-    files: ["**/*.jsonc"],
-    ignores,
-    plugins: { json: json as any },
-    language: "json/jsonc",
-    extends: ["json/recommended"],
-  },
-  { files: ["**/*.css"], ignores, plugins: { css }, language: "css/css", extends: ["css/recommended"] },
 
   // turn off some rules for react-router generated files
   {

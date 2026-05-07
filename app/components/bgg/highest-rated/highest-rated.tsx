@@ -6,7 +6,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
-import { useBggCollectionApi } from "../../../apis/bgg/use-bgg-collection-api";
+import { useBggCollectionApi } from "~/apis/bgg/use-bgg-collection-api";
 
 const PLAY_COUNT = 5;
 

@@ -12,7 +12,7 @@ type Params = {
   username?: string;
 };
 
-type QueryKey = [string, Params];
+type QueryKey = [ReturnType<typeof useApi>["get"], string, Params];
 type Options = CustomQueryOptions<BggCollectionResponse, Error, BggCollectionItem[], QueryKey>;
 
 const uri = `${BASE_BGG_API_URL}/collection`;
@@ -27,7 +27,7 @@ export const useBggCollectionApi = (params: Params, { enabled = true, ...options
         responseType: "xmlToJson",
         signal,
       }),
-    queryKey: [uri, params],
+    queryKey: [get, uri, params],
     select: (data) => {
       const items = data.items?.item;
       if (!items) {

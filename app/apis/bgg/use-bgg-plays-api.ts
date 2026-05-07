@@ -23,7 +23,7 @@ type Params = {
   username?: string;
 };
 
-type QueryKey = [string, Params];
+type QueryKey = [ReturnType<typeof useApi>["get"], string, Params];
 type Options = CustomQueryOptions<BggPlaysResponse, Error, BggPlay[], QueryKey>;
 
 const uri = `${BASE_BGG_API_URL}/plays`;
@@ -78,7 +78,7 @@ export const useBggPlaysApi = ({ page = 1, ...restParams }: Params, { enabled = 
 
       return { ...response, plays: { ...(response.plays ?? {}), play: allPlays } };
     },
-    queryKey: [uri, { page, ...restParams }],
+    queryKey: [get, uri, { page, ...restParams }],
     select: (data) => {
       const plays = data.plays?.play;
       if (!plays) {
