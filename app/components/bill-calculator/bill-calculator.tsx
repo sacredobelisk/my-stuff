@@ -107,7 +107,7 @@ export const BillCalculatorPage = () => {
       />
 
       <Stack spacing={2}>
-        <Stack alignItems="center" direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
           <Typography sx={{ flex: "auto" }} variant="h2">
             Bill Calculator
             <Typography color="textSecondary">Split the bill equally by proportion, including tax and tip.</Typography>
@@ -152,7 +152,7 @@ export const BillCalculatorPage = () => {
               <Stack spacing={0.5}>
                 <Typography id="tax-slider">Tax: {taxPercent.toFixed(2)}%</Typography>
 
-                <Grid container alignItems="center" spacing={2}>
+                <Grid container spacing={2} sx={{ alignItems: "center" }}>
                   <Grid size="grow">
                     <Slider
                       aria-labelledby="tax-slider"
@@ -180,7 +180,7 @@ export const BillCalculatorPage = () => {
               <Stack spacing={0.5}>
                 <Typography id="tip-slider">Tip: {tipPercent.toFixed(2)}%</Typography>
 
-                <Grid container alignItems="center" spacing={2}>
+                <Grid container spacing={2} sx={{ alignItems: "center" }}>
                   <Grid size="grow">
                     <Slider
                       aria-labelledby="tip-slider"
