@@ -1,5 +1,5 @@
 {
-  "eslint.validate": ["Css", "javascript", "javascriptreact", "typescript", "typescriptreact", "json", "jsonc"],
+  "eslint.validate": ["css", "javascript", "javascriptreact", "typescript", "typescriptreact", "json", "jsonc"],
   "js/ts.preferences.autoImportSpecifierExcludeRegexes": ["^@mui/[^/]+$"],
   "cSpell.words": [
     "Aéropostale",
