@@ -29,7 +29,6 @@ export const BillCalculatorPage = () => {
 
   const { addPerson, people, removePerson, setPeople, updatePerson } = useBillCalculatorPeople();
   const {
-    calculatedTotal,
     calculateShare,
     finalTotal,
     handleFinalTotalChange,
@@ -250,7 +249,7 @@ export const BillCalculatorPage = () => {
                     onValueChange={handleFinalTotalChange}
                     size="small"
                     step={0.01}
-                    value={finalTotal ?? calculatedTotal}
+                    value={finalTotal}
                   />
                 </Grid>
               </Grid>

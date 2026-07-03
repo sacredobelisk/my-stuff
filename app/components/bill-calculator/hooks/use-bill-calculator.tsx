@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { useCallback, useState, type Dispatch, type SetStateAction } from "react";
 import { useLocalStorage } from "~/hooks/use-local-storage";
 import type { BillData, Person } from "../configuration/types";
 import { createDefaultBillData, DEFAULT_TAX_PERCENT, DEFAULT_TIP_PERCENT, generateKey } from "../configuration/utils";
@@ -9,87 +9,61 @@ type Props = {
   setPeople: Dispatch<SetStateAction<Person[]>>;
 };
 
+const roundToTwoDecimals = (value: number) => Math.round(value * 100) / 100;
+
 export const useBillCalculator = ({ onSave, people, setPeople }: Props) => {
   const [savedData, setSavedData] = useLocalStorage<BillData>("billCalculator", createDefaultBillData());
 
-  const [finalTotal, setFinalTotal] = useState<number | null>(savedData.finalTotal);
-  const [isEditingFinalTotal, setIsEditingFinalTotal] = useState(false);
+  // Non-null when the user edited the final total directly; the tip is then derived from it.
+  // Null means the total is derived from tax + tip instead.
+  const [finalTotalOverride, setFinalTotalOverride] = useState<number | null>(null);
+  const [manualTipPercent, setManualTipPercent] = useState(savedData.tipPercent);
   const [taxPercent, setTaxPercent] = useState(savedData.taxPercent);
-  const [tipPercent, setTipPercent] = useState(savedData.tipPercent);
 
   const subtotal = people.reduce((sum, person) => sum + (person.subtotal || 0), 0);
   const taxAmount = subtotal * (taxPercent / 100);
+  const tipPercent =
+    finalTotalOverride !== null && subtotal > 0
+      ? roundToTwoDecimals(Math.max(0, ((finalTotalOverride - subtotal - taxAmount) / subtotal) * 100))
+      : manualTipPercent;
   const tipAmount = subtotal * (tipPercent / 100);
-  const calculatedTotal = subtotal + taxAmount + tipAmount;
-
-  // When final total is manually set, calculate the implied tip percentage
-  const calculateTipFromFinalTotal = useCallback(
-    (total: number) => {
-      if (subtotal === 0) return tipPercent;
-      const impliedTip = total - subtotal - taxAmount;
-      return Math.max(0, (impliedTip / subtotal) * 100);
-    },
-    [subtotal, taxAmount, tipPercent]
-  );
-
-  // Update tip when final total changes (user editing final total)
-  useEffect(() => {
-    if (isEditingFinalTotal && finalTotal !== null && subtotal > 0) {
-      const newTipPercent = calculateTipFromFinalTotal(finalTotal);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setTipPercent(Math.round(newTipPercent * 100) / 100);
-    }
-  }, [calculateTipFromFinalTotal, finalTotal, isEditingFinalTotal, subtotal]);
-
-  // Update final total when tip/tax changes (user not editing final total)
-  useEffect(() => {
-    if (!isEditingFinalTotal) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setFinalTotal(Math.round(calculatedTotal * 100) / 100);
-    }
-  }, [calculatedTotal, isEditingFinalTotal]);
+  const calculatedTotal = roundToTwoDecimals(subtotal + taxAmount + tipAmount);
+  const finalTotal = finalTotalOverride ?? calculatedTotal;
 
   const handleSave = () => {
-    setSavedData({ finalTotal, people, taxPercent, tipPercent });
-    onSave?.({ finalTotal, people, taxPercent, tipPercent });
+    const data: BillData = { finalTotal: finalTotalOverride, people, taxPercent, tipPercent };
+    setSavedData(data);
+    onSave?.(data);
   };
 
   const handleReset = () => {
     setPeople([{ key: generateKey(), name: "", subtotal: 0 }]);
     setTaxPercent(DEFAULT_TAX_PERCENT);
-    setTipPercent(DEFAULT_TIP_PERCENT);
-    setFinalTotal(null);
-    setIsEditingFinalTotal(false);
+    setManualTipPercent(DEFAULT_TIP_PERCENT);
+    setFinalTotalOverride(null);
   };
 
   const handleTaxChange = (value: number | null) => {
-    setIsEditingFinalTotal(false);
+    // Leaving override mode: keep the tip the user currently sees rather than snapping back
+    setManualTipPercent(tipPercent);
+    setFinalTotalOverride(null);
     setTaxPercent(value ?? 0);
   };
 
   const handleTipChange = (value: number | null) => {
-    setIsEditingFinalTotal(false);
-    setTipPercent(value ?? 0);
+    setFinalTotalOverride(null);
+    setManualTipPercent(value ?? 0);
   };
 
-  const handleFinalTotalChange = (value: number | null) => {
-    setIsEditingFinalTotal(false);
-    setFinalTotal(value);
-  };
+  const handleFinalTotalChange = (value: number | null) => setFinalTotalOverride(value);
 
   // Calculate each person's share
   const calculateShare = useCallback(
-    (personSubtotal: number) => {
-      if (subtotal === 0) return 0;
-      const proportion = personSubtotal / subtotal;
-      const effectiveTotal = finalTotal ?? calculatedTotal;
-      return proportion * effectiveTotal;
-    },
-    [subtotal, finalTotal, calculatedTotal]
+    (personSubtotal: number) => (subtotal === 0 ? 0 : (personSubtotal / subtotal) * finalTotal),
+    [subtotal, finalTotal]
   );
 
   return {
-    calculatedTotal,
     calculateShare,
     finalTotal,
     handleFinalTotalChange,
