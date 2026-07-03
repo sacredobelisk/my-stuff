@@ -4,9 +4,10 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import { useBggCollectionApi } from "~/apis/bgg/use-bgg-collection-api";
+import { BGG_USERNAME } from "~/apis/bgg/utils";
+import { LoadingSkeleton } from "../../loading-skeleton/loading-skeleton";
 
 const PLAY_COUNT = 5;
 
@@ -15,12 +16,12 @@ export const HighestRated = () => {
     data: rated9s,
     isLoading: isLoadingRated9s,
     isSuccess: isSuccessRated9s,
-  } = useBggCollectionApi({ minrating: 9, rating: 9, username: "sobrien79" }, { enabled: false });
+  } = useBggCollectionApi({ minrating: 9, rating: 9, username: BGG_USERNAME }, { enabled: false });
   const {
     data: rated10s,
     isLoading: isLoadingRated10s,
     isSuccess: isSuccessRated10s,
-  } = useBggCollectionApi({ minrating: 10, rating: 10, username: "sobrien79" }, { enabled: false });
+  } = useBggCollectionApi({ minrating: 10, rating: 10, username: BGG_USERNAME }, { enabled: false });
 
   return (
     <Card>
@@ -35,11 +36,7 @@ export const HighestRated = () => {
         }
       />
       <CardContent>
-        {isLoadingRated9s || isLoadingRated10s
-          ? Array(PLAY_COUNT)
-              .fill(0)
-              .map((_, index) => <Skeleton height={35} key={index} />)
-          : null}
+        {(isLoadingRated9s || isLoadingRated10s) && <LoadingSkeleton count={PLAY_COUNT} />}
         {isSuccessRated9s && isSuccessRated10s && (
           <List>
             {[...rated10s, ...rated9s].map((item) => (

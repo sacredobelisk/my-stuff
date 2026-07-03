@@ -53,6 +53,19 @@ export default defineConfig([
     },
   },
 
+  {
+    rules: {
+      "@tanstack/query/exhaustive-deps": [
+        "error",
+        {
+          allowlist: {
+            variables: ["del", "get", "patch", "post", "put"],
+          },
+        },
+      ],
+    },
+  },
+
   // turn off no-empty-pattern rule for route meta functions
   {
     files: ["**/app/routes/**/*.tsx"],

@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 // import { HighestRated } from "../bgg/highest-rated/highest-rated";
 import { LastPlays } from "../bgg/last-plays/last-plays";
 
-export function AboutPage() {
+export const AboutPage = () => {
   return (
     <Stack spacing={2}>
       <Typography>
@@ -15,4 +15,4 @@ export function AboutPage() {
       {/* <HighestRated /> */}
     </Stack>
   );
-}
+};

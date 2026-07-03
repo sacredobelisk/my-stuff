@@ -6,7 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput, { type OutlinedInputProps } from "@mui/material/OutlinedInput";
-import React from "react";
+import React, { useId } from "react";
 
 /**
  * This component is a placeholder for FormControl to correctly set the shrink label state on SSR.
@@ -24,11 +24,9 @@ type Props = BaseNumberField.Root.Props & {
   size?: "small" | "medium";
 };
 
-export default function NumberField({ error, id: idProp, label, inputSx, size = "medium", ...other }: Props) {
-  let id = React.useId();
-  if (idProp) {
-    id = idProp;
-  }
+export function NumberField({ error, id: idProp, label, inputSx, size = "medium", ...other }: Props) {
+  const generatedId = useId();
+  const id = idProp ?? generatedId;
   return (
     <BaseNumberField.Root
       {...other}

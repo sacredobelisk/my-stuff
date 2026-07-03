@@ -8,6 +8,7 @@ import { Job } from "./components/job";
 import { ResumeSection } from "./components/resume-section";
 
 const comcastStartDate = LocalDate.of(2000, 12, 7);
+const BACKEND_EXPERIENCE_YEARS = 6;
 
 const calculateYearsSinceFirstJob = () => Year.now().value() - comcastStartDate.year();
 
@@ -17,17 +18,18 @@ export const ResumePage = () => {
       <ResumeSection title="Professional Summary">
         <Stack spacing={2}>
           <Typography>
-            With {calculateYearsSinceFirstJob() - 6} years of front-end development experience, I specialize in building
-            robust internet applications using HTML, CSS, JavaScript, and React. I bring strong conceptual thinking,
-            business acumen, and analytical expertise to every project. Known for being a collaborative team player, I
-            quickly absorb new concepts and apply them effectively. My organizational and interpersonal skills support
-            seamless communication and project execution.
+            With {calculateYearsSinceFirstJob() - BACKEND_EXPERIENCE_YEARS} years of front-end development experience, I
+            specialize in building robust internet applications using HTML, CSS, JavaScript, and React. I bring strong
+            conceptual thinking, business acumen, and analytical expertise to every project. Known for being a
+            collaborative team player, I quickly absorb new concepts and apply them effectively. My organizational and
+            interpersonal skills support seamless communication and project execution.
           </Typography>
 
           <Typography>
-            On the back end, I have 6 years of experience in the analysis, design, development, administration, and
-            documentation of enterprise-level business applications using Java. I am well-versed in Object-Oriented
-            Analysis and Design (OOA&D), with practical knowledge of design patterns including Singleton and Factory.
+            On the back end, I have {BACKEND_EXPERIENCE_YEARS} years of experience in the analysis, design, development,
+            administration, and documentation of enterprise-level business applications using Java. I am well-versed in
+            Object-Oriented Analysis and Design (OOA&D), with practical knowledge of design patterns including Singleton
+            and Factory.
           </Typography>
         </Stack>
       </ResumeSection>

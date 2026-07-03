@@ -23,28 +23,16 @@ export const replacePathParams = (url: string, pathParams?: RequestOptions["path
   return updatedUrl;
 };
 
-export const expandArrayParams = (key: string, values: Array<string | number | boolean>) =>
-  values.reduce(
-    (acc: string, value: string | number | boolean, index: number) =>
-      `${acc}${index ? "&" : ""}${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
-    ""
-  );
-
 export const appendQueryParams = (url: string, queryParams?: RequestOptions["queryParams"]) => {
-  const queryParamKeys = queryParams ? Object.keys(queryParams) : [];
-  let updatedUrl = url;
+  if (!queryParams || !Object.keys(queryParams).length) return url;
 
-  if (!queryParamKeys.length || !queryParams) return url;
-
-  queryParamKeys.forEach((param: string, index: number) => {
-    const paramValue = queryParams[param];
-    const queryPartial = Array.isArray(paramValue)
-      ? expandArrayParams(param, paramValue)
-      : `${encodeURIComponent(param)}=${encodeURIComponent(paramValue)}`;
-    updatedUrl = `${updatedUrl}${index ? "&" : "?"}${queryPartial}`;
+  const searchParams = new URLSearchParams();
+  Object.entries(queryParams).forEach(([param, paramValue]) => {
+    const values = Array.isArray(paramValue) ? paramValue : [paramValue];
+    values.forEach((value) => searchParams.append(param, String(value)));
   });
 
-  return updatedUrl;
+  return `${url}${url.includes("?") ? "&" : "?"}${searchParams}`;
 };
 
 export const buildUrl = (

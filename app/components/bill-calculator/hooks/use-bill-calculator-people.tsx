@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useLocalStorage } from "~/hooks/useLocalStorage";
+import { useLocalStorage } from "~/hooks/use-local-storage";
 import type { BillData, Person } from "../configuration/types";
 import { createDefaultBillData, generateKey } from "../configuration/utils";
 
-export function useBillCalculatorPeople() {
+export const useBillCalculatorPeople = () => {
   const [savedData] = useLocalStorage<BillData>("billCalculator", createDefaultBillData());
 
   const [people, setPeople] = useState<Person[]>(savedData.people);
@@ -24,4 +24,4 @@ export function useBillCalculatorPeople() {
     );
 
   return { addPerson, people, removePerson, setPeople, updatePerson };
-}
+};

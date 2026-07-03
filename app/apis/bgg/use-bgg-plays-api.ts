@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useApi } from "../hooks/use-api/use-api";
 import type { CustomQueryOptions } from "../utils/types";
 import type { BggPlay, BggPlaysResponse } from "./types";
-import { BASE_BGG_API_URL, BGG_AUTH_HEADER, BGG_PAGE_SIZE } from "./utils";
+import { BASE_BGG_API_URL, BGG_AUTH_HEADER, BGG_PAGE_SIZE, toArray } from "./utils";
 
 type Params = {
   id?: string;
@@ -23,7 +23,7 @@ type Params = {
   username?: string;
 };
 
-type QueryKey = [ReturnType<typeof useApi>["get"], string, Params];
+type QueryKey = [string, Params];
 type Options = CustomQueryOptions<BggPlaysResponse, Error, BggPlay[], QueryKey>;
 
 const uri = `${BASE_BGG_API_URL}/plays`;
@@ -67,25 +67,12 @@ export const useBggPlaysApi = ({ page = 1, ...restParams }: Params, { enabled = 
         responses.push(...batchResponses);
       }
 
-      const allPlays: BggPlay[] = responses.reduce((acc, current) => {
-        const plays = current.plays?.play;
-        if (!plays) {
-          return acc;
-        }
-        const playsArray = Array.isArray(plays) ? plays : [plays];
-        return [...acc, ...playsArray];
-      }, [] as BggPlay[]);
+      const allPlays = responses.flatMap((current) => toArray(current.plays?.play));
 
-      return { ...response, plays: { ...(response.plays ?? {}), play: allPlays } };
+      return { ...response, plays: { ...response.plays, play: allPlays } };
     },
-    queryKey: [get, uri, { page, ...restParams }],
-    select: (data) => {
-      const plays = data.plays?.play;
-      if (!plays) {
-        return [];
-      }
-      return Array.isArray(plays) ? plays : [plays];
-    },
+    queryKey: [uri, { page, ...restParams }],
+    select: (data) => toArray(data.plays?.play),
     ...options,
     enabled,
   });

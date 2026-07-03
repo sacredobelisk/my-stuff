@@ -5,11 +5,12 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import type { BggPlay } from "~/apis/bgg/types";
 import { useBggPlaysApi } from "~/apis/bgg/use-bgg-plays-api";
+import { BGG_USERNAME } from "~/apis/bgg/utils";
 import { MD } from "~/helpers/dates";
+import { LoadingSkeleton } from "../../loading-skeleton/loading-skeleton";
 
 const PLAY_COUNT = 5;
 
@@ -21,7 +22,7 @@ export const LastPlays = () => {
     data: plays,
     isLoading,
     isSuccess,
-  } = useBggPlaysApi({ mindate: oneMonthAgo.toString(), username: "sobrien79" });
+  } = useBggPlaysApi({ mindate: oneMonthAgo.toString(), username: BGG_USERNAME });
 
   return (
     <Card>
@@ -34,10 +35,8 @@ export const LastPlays = () => {
         }
       />
       <CardContent>
-        {isLoading &&
-          Array(PLAY_COUNT)
-            .fill(0)
-            .map((_, index) => <Skeleton height={35} key={index} />)}
+        {isLoading && <LoadingSkeleton count={PLAY_COUNT} />}
+
         {isSuccess && (
           <List>
             {[...plays]
