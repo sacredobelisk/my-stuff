@@ -59,7 +59,9 @@ export const BillCalculatorPage = () => {
         preProcessEditCellProps: (params) => {
           const value = parseFloat(params.props.value);
           const isValid = !isNaN(value) && value >= 0;
-          setErrorSnackbarMessage("Please enter a valid non-negative number for subtotal.");
+          if (!isValid) {
+            setErrorSnackbarMessage("Please enter a valid non-negative number for subtotal.");
+          }
           return { ...params.props, error: !isValid };
         },
         width: 100,
