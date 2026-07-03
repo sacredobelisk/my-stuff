@@ -7,9 +7,9 @@ const getOrThrowIfNotFound = (name: string): string => {
 };
 
 interface EnvVariables {
-  BGA_AUTH_TOKEN: string;
+  BGG_AUTH_TOKEN: string;
 }
 
 export const PROCESS_ENVS: EnvVariables = {
-  BGA_AUTH_TOKEN: getOrThrowIfNotFound("BGA_AUTH_TOKEN"),
+  BGG_AUTH_TOKEN: getOrThrowIfNotFound("BGG_AUTH_TOKEN"),
 };

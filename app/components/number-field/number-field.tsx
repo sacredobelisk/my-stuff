@@ -6,7 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput, { type OutlinedInputProps } from "@mui/material/OutlinedInput";
-import React from "react";
+import React, { useId } from "react";
 
 /**
  * This component is a placeholder for FormControl to correctly set the shrink label state on SSR.
@@ -24,11 +24,18 @@ type Props = BaseNumberField.Root.Props & {
   size?: "small" | "medium";
 };
 
-export default function NumberField({ error, id: idProp, label, inputSx, size = "medium", ...other }: Props) {
-  let id = React.useId();
-  if (idProp) {
-    id = idProp;
-  }
+export const NumberField = ({
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  error,
+  id: idProp,
+  inputSx,
+  label,
+  size = "medium",
+  ...other
+}: Props) => {
+  const generatedId = useId();
+  const id = idProp ?? generatedId;
   return (
     <BaseNumberField.Root
       {...other}
@@ -46,8 +53,11 @@ export default function NumberField({ error, id: idProp, label, inputSx, size = 
       )}
     >
       <SSRInitialFilled {...other} />
-      <InputLabel htmlFor={id}>{label}</InputLabel>
+      {label && <InputLabel htmlFor={id}>{label}</InputLabel>}
+      {/* aria props go on the input itself; on Root they would land on the FormControl div and not name the field */}
       <BaseNumberField.Input
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
         id={id}
         render={(props, state) => (
           <OutlinedInput
@@ -92,4 +102,4 @@ export default function NumberField({ error, id: idProp, label, inputSx, size = 
       />
     </BaseNumberField.Root>
   );
-}
+};

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useApi } from "../hooks/use-api/use-api";
 import type { CustomQueryOptions } from "../utils/types";
 import type { BggCollectionItem, BggCollectionResponse } from "./types";
-import { BASE_BGG_API_URL, BGG_AUTH_HEADER } from "./utils";
+import { BASE_BGG_API_URL, BGG_AUTH_HEADER, toArray } from "./utils";
 
 type Params = {
   minrating?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
@@ -12,7 +12,7 @@ type Params = {
   username?: string;
 };
 
-type QueryKey = [ReturnType<typeof useApi>["get"], string, Params];
+type QueryKey = [string, Params];
 type Options = CustomQueryOptions<BggCollectionResponse, Error, BggCollectionItem[], QueryKey>;
 
 const uri = `${BASE_BGG_API_URL}/collection`;
@@ -27,14 +27,8 @@ export const useBggCollectionApi = (params: Params, { enabled = true, ...options
         responseType: "xmlToJson",
         signal,
       }),
-    queryKey: [get, uri, params],
-    select: (data) => {
-      const items = data.items?.item;
-      if (!items) {
-        return [];
-      }
-      return Array.isArray(items) ? items : [items];
-    },
+    queryKey: [uri, params],
+    select: (data) => toArray(data.items?.item),
     ...options,
     enabled,
   });

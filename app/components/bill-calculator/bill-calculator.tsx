@@ -17,7 +17,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { useMemo, useState } from "react";
-import NumberField from "~/components/number-field/number-field";
+import { NumberField } from "~/components/number-field/number-field";
 import { formatCurrency } from "~/helpers/numbers";
 import type { Person } from "./configuration/types";
 import { useBillCalculator } from "./hooks/use-bill-calculator";
@@ -29,7 +29,6 @@ export const BillCalculatorPage = () => {
 
   const { addPerson, people, removePerson, setPeople, updatePerson } = useBillCalculatorPeople();
   const {
-    calculatedTotal,
     calculateShare,
     finalTotal,
     handleFinalTotalChange,
@@ -59,7 +58,9 @@ export const BillCalculatorPage = () => {
         preProcessEditCellProps: (params) => {
           const value = parseFloat(params.props.value);
           const isValid = !isNaN(value) && value >= 0;
-          setErrorSnackbarMessage("Please enter a valid non-negative number for subtotal.");
+          if (!isValid) {
+            setErrorSnackbarMessage("Please enter a valid non-negative number for subtotal.");
+          }
           return { ...params.props, error: !isValid };
         },
         width: 100,
@@ -108,10 +109,10 @@ export const BillCalculatorPage = () => {
 
       <Stack spacing={2}>
         <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-          <Typography sx={{ flex: "auto" }} variant="h2">
-            Bill Calculator
+          <Stack sx={{ flex: "auto" }}>
+            <Typography variant="h2">Bill Calculator</Typography>
             <Typography color="textSecondary">Split the bill equally by proportion, including tax and tip.</Typography>
-          </Typography>
+          </Stack>
 
           <Box sx={{ flex: "none" }}>
             <ButtonGroup>
@@ -248,7 +249,7 @@ export const BillCalculatorPage = () => {
                     onValueChange={handleFinalTotalChange}
                     size="small"
                     step={0.01}
-                    value={finalTotal ?? calculatedTotal}
+                    value={finalTotal}
                   />
                 </Grid>
               </Grid>
