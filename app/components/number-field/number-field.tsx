@@ -24,7 +24,16 @@ type Props = BaseNumberField.Root.Props & {
   size?: "small" | "medium";
 };
 
-export function NumberField({ error, id: idProp, label, inputSx, size = "medium", ...other }: Props) {
+export const NumberField = ({
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  error,
+  id: idProp,
+  inputSx,
+  label,
+  size = "medium",
+  ...other
+}: Props) => {
   const generatedId = useId();
   const id = idProp ?? generatedId;
   return (
@@ -44,8 +53,11 @@ export function NumberField({ error, id: idProp, label, inputSx, size = "medium"
       )}
     >
       <SSRInitialFilled {...other} />
-      <InputLabel htmlFor={id}>{label}</InputLabel>
+      {label && <InputLabel htmlFor={id}>{label}</InputLabel>}
+      {/* aria props go on the input itself; on Root they would land on the FormControl div and not name the field */}
       <BaseNumberField.Input
+        aria-label={ariaLabel}
+        aria-labelledby={ariaLabelledBy}
         id={id}
         render={(props, state) => (
           <OutlinedInput
@@ -90,4 +102,4 @@ export function NumberField({ error, id: idProp, label, inputSx, size = "medium"
       />
     </BaseNumberField.Root>
   );
-}
+};

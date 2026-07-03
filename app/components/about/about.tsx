@@ -11,7 +11,6 @@ export const AboutPage = () => {
       </Typography>
 
       <LastPlays />
-      {/* <HighestRated /> */}
     </Stack>
   );
 };

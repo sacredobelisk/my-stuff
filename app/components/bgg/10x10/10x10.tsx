@@ -4,6 +4,7 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
+import Typography from "@mui/material/Typography";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -55,21 +56,23 @@ export const TenByTenPage = () => {
   }, [plays]);
 
   const playColumns = useMemo(() => Array.from({ length: MAX_PLAYS }, (_, index) => index + 1), []);
+  const years = Array.from({ length: Year.now().value() - START_YEAR + 1 }, (_, index) => START_YEAR + index);
 
   return (
     <Stack spacing={2}>
+      <Typography variant="h2">Board Game 10x10</Typography>
+
       <ButtonGroup aria-label="Years" variant="outlined" sx={{ alignSelf: "center" }}>
-        {Array(Year.now().value() - START_YEAR + 1)
-          .fill(0)
-          .map((_, index) => (
-            <Button
-              key={index}
-              onClick={() => setYear(START_YEAR + index)}
-              variant={year === START_YEAR + index ? "contained" : "outlined"}
-            >
-              {START_YEAR + index}
-            </Button>
-          ))}
+        {years.map((yearOption) => (
+          <Button
+            aria-pressed={year === yearOption}
+            key={yearOption}
+            onClick={() => setYear(yearOption)}
+            variant={year === yearOption ? "contained" : "outlined"}
+          >
+            {yearOption}
+          </Button>
+        ))}
       </ButtonGroup>
 
       {isLoading && <LoadingSkeleton count={MAX_PLAYS} />}
@@ -99,7 +102,9 @@ export const TenByTenPage = () => {
               ) : (
                 topTenPlays.map((entry) => (
                   <TableRow key={entry.name}>
-                    <TableCell>{entry.name}</TableCell>
+                    <TableCell component="th" scope="row">
+                      {entry.name}
+                    </TableCell>
                     {playColumns.map((count) => (
                       <TableCell align="center" key={`${entry.name}-${count}`}>
                         {count <= Math.min(entry.totalPlays, MAX_PLAYS) ? "X" : ""}

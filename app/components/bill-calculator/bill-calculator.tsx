@@ -109,10 +109,10 @@ export const BillCalculatorPage = () => {
 
       <Stack spacing={2}>
         <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-          <Typography sx={{ flex: "auto" }} variant="h2">
-            Bill Calculator
+          <Stack sx={{ flex: "auto" }}>
+            <Typography variant="h2">Bill Calculator</Typography>
             <Typography color="textSecondary">Split the bill equally by proportion, including tax and tip.</Typography>
-          </Typography>
+          </Stack>
 
           <Box sx={{ flex: "none" }}>
             <ButtonGroup>

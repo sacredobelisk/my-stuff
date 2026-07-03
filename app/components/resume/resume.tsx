@@ -165,12 +165,8 @@ export const ResumePage = () => {
           >
             <Typography>
               Created a software layer to connect to a third-party company, thePlatform, to pull down video metadata and
-              output in XML the Fan
-              <Typography component="sup" sx={{ fontSize: "0.7rem", verticalAlign: "super" }}>
-                TM
-              </Typography>{" "}
-              would be able to read. Also added UI screens to the admin interface to improve the editors&apos; workflow.
-              Provided content changes and new features to the Comcast.net portal.
+              output in XML the Fan™ would be able to read. Also added UI screens to the admin interface to improve the
+              editors&apos; workflow. Provided content changes and new features to the Comcast.net portal.
             </Typography>
           </Job>
         </Stack>

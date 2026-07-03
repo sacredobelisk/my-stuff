@@ -31,15 +31,12 @@ export default defineConfig([
     },
   },
 
-  tseslint.configs.recommended,
-  { ...pluginReact.configs.flat.recommended, files: jsFiles },
-  { ...reactHooks.configs.flat.recommended, files: jsFiles },
-
   { files: ["**/*.json"], ...json.configs.recommended, language: "json/json" },
   { files: ["**/*.jsonc"], ...json.configs.recommended, language: "json/jsonc" },
   { files: ["**/*.css"], ...css.configs.recommended, language: "css/css" },
 
   {
+    files: jsFiles,
     rules: {
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unused-vars": "warn",
@@ -54,6 +51,7 @@ export default defineConfig([
   },
 
   {
+    files: jsFiles,
     rules: {
       "@tanstack/query/exhaustive-deps": [
         "error",

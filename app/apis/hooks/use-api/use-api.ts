@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { ApiError, type RequestOptions, type UseApiOptions } from "../../utils/types";
 import { parseResponse } from "./build-response";
 import { buildUrl } from "./build-url";
@@ -6,6 +6,13 @@ import { buildUrl } from "./build-url";
 const DEFAULT_USE_API_OPTIONS: UseApiOptions = {};
 
 export const useApi = (options: UseApiOptions = DEFAULT_USE_API_OPTIONS) => {
+  // Read options through a ref so the returned methods stay referentially stable even when callers
+  // pass an inline options object; the eslint @tanstack/query allowlist relies on that stability.
+  const optionsRef = useRef(options);
+  useEffect(() => {
+    optionsRef.current = options;
+  }, [options]);
+
   return useMemo(() => {
     async function baseFetch<T>(
       url: string,
@@ -13,7 +20,7 @@ export const useApi = (options: UseApiOptions = DEFAULT_USE_API_OPTIONS) => {
       body?: unknown,
       requestOptions: RequestOptions = {}
     ): Promise<T> {
-      const { defaultHeaders = {}, onError } = options;
+      const { defaultHeaders = {}, onError } = optionsRef.current;
       const {
         headers: requestHeaders,
         responseType = "json",
@@ -80,5 +87,5 @@ export const useApi = (options: UseApiOptions = DEFAULT_USE_API_OPTIONS) => {
     };
 
     return { del, get, patch, post, put };
-  }, [options]);
+  }, []);
 };

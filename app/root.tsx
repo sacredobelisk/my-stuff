@@ -36,11 +36,31 @@ function LayoutContent({ children }: PropsWithChildren) {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <Box
+        component="a"
+        href="#main-content"
+        sx={{
+          bgcolor: "background.paper",
+          borderRadius: 1,
+          boxShadow: 3,
+          left: 8,
+          p: 1,
+          position: "absolute",
+          top: 8,
+          // visually hidden until keyboard focus lands on it
+          transform: "translateY(-200%)",
+          zIndex: "modal",
+          "&:focus": { transform: "none" },
+        }}
+      >
+        Skip to content
+      </Box>
       <AppBar position="static">
         <Toolbar>
           <IconButton
+            aria-expanded={mobileOpen}
+            aria-label="open navigation menu"
             color="inherit"
-            aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: "none" } }}
@@ -54,7 +74,7 @@ function LayoutContent({ children }: PropsWithChildren) {
       </AppBar>
       <Box sx={{ display: "flex", flexGrow: 1 }}>
         <Nav drawerWidth={drawerWidth} mobileOpen={mobileOpen} onDrawerClose={handleDrawerToggle} />
-        <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
+        <Box component="main" id="main-content" tabIndex={-1} sx={{ flexGrow: 1, outline: "none", p: 2 }}>
           {children}
         </Box>
       </Box>

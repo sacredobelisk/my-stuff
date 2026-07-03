@@ -29,7 +29,7 @@ export const LastPlays = () => {
       <CardHeader
         title={
           <Box sx={{ alignItems: "center", display: "flex" }}>
-            <Typography sx={{ flex: "auto" }} variant="h5">{`Last ${PLAY_COUNT} Plays`}</Typography>
+            <Typography component="h2" sx={{ flex: "auto" }} variant="h5">{`Last ${PLAY_COUNT} Plays`}</Typography>
             <img alt="Powered by BGG" src="/images/powered_by_BGG_01_SM.png" width="125" />
           </Box>
         }
