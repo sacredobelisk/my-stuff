@@ -1,2 +1,6 @@
+# The BGG proxy declares its own /api/bgg/:endpoint route, which Netlify matches ahead of these
+# rules. This is a safety net so the SPA catch-all below can never swallow an API call.
+/api/bgg/*  /.netlify/functions/bgg/:splat  200
+
 # Used for Netlify to allow reloading of SPA
-/* /index.html 200
+/*  /index.html  200

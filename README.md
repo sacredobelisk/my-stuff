@@ -35,13 +35,19 @@ Copy [.env.example](.env.example) to `.env` and fill in the BoardGameGeek token:
 cp .env.example .env
 ```
 
-The app starts without it — the request that needs it just fails and the board game pages show an
-error instead of plays.
+BGG's XML API requires an `Authorization` header on every request, so the token is a real
+credential. It is read only by [netlify/functions/bgg.ts](netlify/functions/bgg.ts) and is
+deliberately **not** `VITE_`-prefixed — that prefix would inline it into the client bundle.
+
+Because the board game pages go through that function, they need `npx netlify dev` rather than
+`npm run dev`, which serves the SPA alone and will 404 on `/api/bgg/*`. Everything else works
+under either.
 
 ## Commands
 
 ```bash
-npm run dev        # Dev server with HMR at http://localhost:5173
+npm run dev        # SPA only, HMR at http://localhost:5173 (no /api/bgg proxy)
+npx netlify dev    # SPA + Netlify functions at http://localhost:8888
 npm run build      # Production build to /build/client
 npm test           # Unit tests
 npm run lint       # ESLint
@@ -57,9 +63,12 @@ app/
 ├── helpers/        # Formatting and shared sx
 ├── hooks/          # Generic reusable hooks
 ├── routes/         # Route modules — meta + default export only
-├── utils/          # Env vars, page meta, shared types
+├── utils/          # Page meta and shared types
 ├── root.tsx        # Document shell, app bar, nav, error boundary
 └── routes.ts       # Route table
+
+netlify/
+└── functions/      # Server-side code: the BGG proxy that holds the auth token
 ```
 
 Feature components follow a consistent shape: the component itself at the top level, with `configuration/`
