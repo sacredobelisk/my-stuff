@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { Person } from "~/components/bill-calculator/configuration/types";
-import { allocateShares, parseBillData } from "~/components/bill-calculator/configuration/utils";
+import {
+  allocateShares,
+  hasSubtotalChanged,
+  parseBillData,
+  toSubtotal,
+} from "~/components/bill-calculator/configuration/utils";
 
 const person = (key: string, subtotal: number): Person => ({ key, name: key, subtotal });
 
@@ -36,6 +41,44 @@ describe("allocateShares", () => {
     const shares = allocateShares(people, 149.99);
 
     expect(sumOf(shares)).toBe(149.99);
+  });
+});
+
+describe("toSubtotal", () => {
+  it.each([
+    ["a number", 12.5, 12.5],
+    ["a numeric string from the grid", "12.5", 12.5],
+    ["an empty string", "", 0],
+    ["a non-numeric string", "abc", 0],
+    ["a negative number", -5, 0],
+    ["null", null, 0],
+    ["undefined", undefined, 0],
+  ])("normalises %s", (_label, input, expected) => {
+    expect(toSubtotal(input)).toBe(expected);
+  });
+});
+
+describe("hasSubtotalChanged", () => {
+  const people = [person("a", 10), person("b", 20)];
+
+  it("is false when only the name changed", () => {
+    expect(hasSubtotalChanged(people, { key: "a", name: "Renamed", subtotal: 10 })).toBe(false);
+  });
+
+  it("is false when an untouched row is committed", () => {
+    expect(hasSubtotalChanged(people, people[0])).toBe(false);
+  });
+
+  it("is false when the grid hands the same subtotal back as a string", () => {
+    expect(hasSubtotalChanged(people, { key: "a", name: "a", subtotal: "10" as unknown as number })).toBe(false);
+  });
+
+  it("is true when the subtotal changed", () => {
+    expect(hasSubtotalChanged(people, { key: "a", name: "a", subtotal: 12 })).toBe(true);
+  });
+
+  it("is false for someone who is not on the bill", () => {
+    expect(hasSubtotalChanged(people, person("z", 99))).toBe(false);
   });
 });
 

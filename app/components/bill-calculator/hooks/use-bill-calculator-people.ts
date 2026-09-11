@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import type { Person } from "~/components/bill-calculator/configuration/types";
-import { createPerson } from "~/components/bill-calculator/configuration/utils";
+import { createPerson, toSubtotal } from "~/components/bill-calculator/configuration/utils";
 
 /**
  * Owns the list of people on the bill. The list is never allowed to empty out, so the grid
@@ -22,7 +22,7 @@ export const useBillCalculatorPeople = (initialPeople: Person[]) => {
       setPeople((previous) =>
         previous.map((existing) =>
           existing.key === person.key
-            ? { ...person, name: person.name.trim(), subtotal: Number(person.subtotal) || 0 }
+            ? { ...person, name: person.name.trim(), subtotal: toSubtotal(person.subtotal) }
             : existing
         )
       ),

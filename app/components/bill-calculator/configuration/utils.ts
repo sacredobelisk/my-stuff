@@ -23,6 +23,23 @@ export const createDefaultBillData = (): BillData => ({
   tipPercent: DEFAULT_TIP_PERCENT,
 });
 
+/** The grid hands back whatever was typed, so normalise it to a non-negative number. */
+export const toSubtotal = (value: unknown) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+};
+
+/**
+ * Whether a committed row actually changes what the bill comes to.
+ *
+ * The grid commits a whole row at a time, so renaming someone — or committing a row untouched —
+ * arrives here too. Only a subtotal change should be allowed to disturb a manually entered total.
+ */
+export const hasSubtotalChanged = (people: Person[], updated: Person) => {
+  const previous = people.find(({ key }) => key === updated.key);
+  return !!previous && toSubtotal(updated.subtotal) !== previous.subtotal;
+};
+
 const isPerson = (value: unknown): value is Person => {
   if (typeof value !== "object" || value === null) return false;
   const { key, name, subtotal } = value as Partial<Person>;

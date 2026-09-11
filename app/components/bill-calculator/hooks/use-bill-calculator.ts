@@ -6,6 +6,7 @@ import {
   createPerson,
   DEFAULT_TAX_PERCENT,
   DEFAULT_TIP_PERCENT,
+  hasSubtotalChanged,
   parseBillData,
 } from "~/components/bill-calculator/configuration/utils";
 import { useBillCalculatorPeople } from "~/components/bill-calculator/hooks/use-bill-calculator-people";
@@ -85,10 +86,12 @@ export const useBillCalculator = ({ onSave }: Props = {}) => {
 
   const handleUpdatePerson = useCallback(
     (person: Person) => {
-      setMode("percent");
+      // Renaming someone does not change what the bill comes to, so it must not throw away a
+      // manually entered final total the way an edited subtotal does.
+      if (hasSubtotalChanged(people, person)) setMode("percent");
       updatePerson(person);
     },
-    [updatePerson]
+    [people, updatePerson]
   );
 
   const handleReset = () => {

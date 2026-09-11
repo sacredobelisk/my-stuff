@@ -50,12 +50,15 @@ export const TenByTenPage = () => {
   );
 
   const topGames = useMemo(() => {
-    const playsByGame = (plays ?? []).reduce<Record<string, number>>(
-      (acc, play) => ({ ...acc, [play.item.name]: (acc[play.item.name] ?? 0) + play.quantity }),
-      {}
-    );
+    // An "ALL" query returns a full year of history, so accumulate into a local Map. Spreading the
+    // accumulator would re-copy it once per play and make this quadratic.
+    const playsByGame = new Map<string, number>();
 
-    return Object.entries(playsByGame)
+    for (const play of plays ?? []) {
+      playsByGame.set(play.item.name, (playsByGame.get(play.item.name) ?? 0) + play.quantity);
+    }
+
+    return [...playsByGame]
       .map(([name, totalPlays]) => ({ name, totalPlays }))
       .sort((a, b) => b.totalPlays - a.totalPlays)
       .slice(0, TOP_GAME_COUNT);
