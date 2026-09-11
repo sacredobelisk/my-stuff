@@ -1,11 +1,8 @@
-import { PROCESS_ENVS } from "~/utils/env-vars";
-
-// Sending `Bearer ` with no token is worse than sending nothing, so drop the header when unset.
-export const BGG_AUTH_HEADER: Record<string, string> = PROCESS_ENVS.BGG_AUTH_TOKEN
-  ? { Authorization: `Bearer ${PROCESS_ENVS.BGG_AUTH_TOKEN}` }
-  : {};
-
-export const BASE_BGG_API_URL = "https://boardgamegeek.com/xmlapi2";
+/**
+ * Served by netlify/functions/bgg.ts rather than BoardGameGeek directly, so the auth token their
+ * XML API requires stays on the server instead of being inlined into the client bundle.
+ */
+export const BASE_BGG_API_URL = "/api/bgg";
 
 export const BGG_PAGE_SIZE = 100;
 

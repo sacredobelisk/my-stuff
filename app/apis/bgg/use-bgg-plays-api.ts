@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import type { BggPlay, BggPlaysResponse } from "~/apis/bgg/types";
-import { BASE_BGG_API_URL, BGG_AUTH_HEADER, BGG_PAGE_SIZE } from "~/apis/bgg/utils";
+import { BASE_BGG_API_URL, BGG_PAGE_SIZE } from "~/apis/bgg/utils";
 import { useApi } from "~/apis/hooks/use-api/use-api";
 import type { CustomQueryOptions } from "~/apis/utils/types";
 
@@ -43,7 +43,6 @@ const toPlaysArray = (response: BggPlaysResponse): BggPlay[] => {
 
 const fetchPlaysPage = (get: GetRequest, params: PageParams, page: number, signal?: AbortSignal) =>
   get<BggPlaysResponse>(uri, {
-    headers: BGG_AUTH_HEADER,
     queryParams: { ...params, page },
     responseType: "xmlToJson",
     signal,

@@ -41,6 +41,9 @@ export default defineConfig([
     },
   },
 
+  // Netlify functions run on the server, not in the browser.
+  { files: ["netlify/**/*.ts"], languageOptions: { globals: globals.node } },
+
   tseslint.configs.recommended,
   { ...pluginReact.configs.flat.recommended, files: jsFiles },
   { ...reactHooks.configs.flat.recommended, files: jsFiles },
