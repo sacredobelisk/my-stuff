@@ -1,5 +1,5 @@
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { type PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
 
 const theme = createTheme({
   typography: {
@@ -18,6 +18,6 @@ const theme = createTheme({
   },
 });
 
-export const CustomThemeProvider = ({ children }: PropsWithChildren) => {
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
-};
+export const CustomThemeProvider = ({ children }: PropsWithChildren) => (
+  <ThemeProvider theme={theme}>{children}</ThemeProvider>
+);

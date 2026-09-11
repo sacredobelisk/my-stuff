@@ -6,29 +6,46 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput, { type OutlinedInputProps } from "@mui/material/OutlinedInput";
-import React from "react";
+import { useId, type ReactNode } from "react";
 
 /**
- * This component is a placeholder for FormControl to correctly set the shrink label state on SSR.
+ * Placeholder that lets MUI's FormControl resolve the shrink label state during SSR.
+ * Base UI owns the real input, so this renders nothing.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function SSRInitialFilled(_: BaseNumberField.Root.Props) {
-  return null;
-}
+const SSRInitialFilled = (_: BaseNumberField.Root.Props) => null;
 SSRInitialFilled.muiName = "Input";
 
 type Props = BaseNumberField.Root.Props & {
   error?: boolean;
-  label?: React.ReactNode;
   inputSx?: OutlinedInputProps["sx"];
+  label?: ReactNode;
   size?: "small" | "medium";
 };
 
-export default function NumberField({ error, id: idProp, label, inputSx, size = "medium", ...other }: Props) {
-  let id = React.useId();
-  if (idProp) {
-    id = idProp;
-  }
+export const NumberField = ({
+  "aria-describedby": ariaDescribedBy,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  error,
+  id: idProp,
+  inputSx,
+  label,
+  size = "medium",
+  ...other
+}: Props) => {
+  const generatedId = useId();
+  const id = idProp ?? generatedId;
+
+  // Base UI hands Root's props to the `render` callback below, which builds a FormControl and
+  // keeps only what it needs — so aria attributes have to be applied to the input directly or
+  // they are dropped and the field ends up with no accessible name.
+  const ariaProps = {
+    ...(ariaDescribedBy ? { "aria-describedby": ariaDescribedBy } : {}),
+    ...(ariaLabel ? { "aria-label": ariaLabel } : {}),
+    ...(ariaLabelledBy ? { "aria-labelledby": ariaLabelledBy } : {}),
+  };
+
   return (
     <BaseNumberField.Root
       {...other}
@@ -46,7 +63,7 @@ export default function NumberField({ error, id: idProp, label, inputSx, size = 
       )}
     >
       <SSRInitialFilled {...other} />
-      <InputLabel htmlFor={id}>{label}</InputLabel>
+      {label && <InputLabel htmlFor={id}>{label}</InputLabel>}
       <BaseNumberField.Input
         id={id}
         render={(props, state) => (
@@ -58,7 +75,7 @@ export default function NumberField({ error, id: idProp, label, inputSx, size = 
             onFocus={props.onFocus}
             onKeyDown={props.onKeyDown}
             onKeyUp={props.onKeyUp}
-            slotProps={{ input: props }}
+            slotProps={{ input: { ...props, ...ariaProps } }}
             value={state.inputValue}
             endAdornment={
               <InputAdornment
@@ -92,4 +109,4 @@ export default function NumberField({ error, id: idProp, label, inputSx, size = 
       />
     </BaseNumberField.Root>
   );
-}
+};

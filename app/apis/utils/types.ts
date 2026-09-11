@@ -1,10 +1,13 @@
 import type { DefaultError, QueryKey, UseQueryOptions } from "@tanstack/react-query";
-import type { PartialProperty } from "../../utils/types";
-import { ERROR_MESSAGES } from "./utils";
+import { ERROR_MESSAGES } from "~/apis/utils/utils";
+import type { PartialProperty } from "~/utils/types";
 
 export type ResponseType = "blob" | "json" | "text" | "xml" | "xmlToJson";
 
-export type QueryParamObject = { [key: string]: (string | number | boolean) | Array<string | number | boolean> };
+export type QueryParamValue = string | number | boolean;
+
+/** Undefined values are allowed so callers can spread optional params straight in; they are skipped when building the url. */
+export type QueryParamObject = Record<string, QueryParamValue | QueryParamValue[] | undefined>;
 
 export interface RequestOptions extends Omit<RequestInit, "method" | "body"> {
   pathParams?: Record<string, string | number | boolean>;

@@ -1,5 +1,5 @@
 import { XMLParser, type X2jOptions } from "fast-xml-parser";
-import { type ResponseType } from "../../utils/types";
+import type { ResponseType } from "~/apis/utils/types";
 
 const xmlParserOptions: X2jOptions = {
   allowBooleanAttributes: true,

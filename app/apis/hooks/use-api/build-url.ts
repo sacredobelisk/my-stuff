@@ -1,60 +1,47 @@
-import { removeTrailingSlash } from "../../../helpers/strings";
-import type { RequestOptions } from "../../utils/types";
+import type { RequestOptions } from "~/apis/utils/types";
+import { removeTrailingSlash } from "~/helpers/strings";
+
+const PATH_PARAM_PATTERN = /:\w+/;
 
 export const replacePathParams = (url: string, pathParams?: RequestOptions["pathParams"]) => {
-  const pathParamKeys = pathParams ? Object.keys(pathParams) : [];
-  const warning = `${url} has path params that should be replaced via pathParams in your request.`;
+  if (!PATH_PARAM_PATTERN.test(url)) return url;
 
-  if (!url.match(/(:\w+)/)) return url;
-  if (!pathParamKeys.length || !pathParams) {
+  const warning = `${url} has path params that should be replaced via pathParams in your request.`;
+  const entries = Object.entries(pathParams ?? {});
+
+  if (!entries.length) {
     console.warn(warning); // eslint-disable-line no-console
     return url;
   }
 
-  let updatedUrl = url;
+  // `\b` keeps `:id` from partially matching a longer placeholder such as `:idNumber`.
+  const updatedUrl = entries.reduce(
+    (acc, [param, value]) => acc.replace(new RegExp(`:${param}\\b`), encodeURIComponent(value)),
+    url
+  );
 
-  pathParamKeys.forEach((param: string) => {
-    const regex = new RegExp(`:${param}`);
-    updatedUrl = updatedUrl.replace(regex, encodeURIComponent(pathParams[param]));
-  });
-
-  if (updatedUrl.match(/(:\w+)/)) console.warn(warning); // eslint-disable-line no-console
+  if (PATH_PARAM_PATTERN.test(updatedUrl)) console.warn(warning); // eslint-disable-line no-console
 
   return updatedUrl;
 };
 
-export const expandArrayParams = (key: string, values: Array<string | number | boolean>) =>
-  values.reduce(
-    (acc: string, value: string | number | boolean, index: number) =>
-      `${acc}${index ? "&" : ""}${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
-    ""
-  );
-
 export const appendQueryParams = (url: string, queryParams?: RequestOptions["queryParams"]) => {
-  const queryParamKeys = queryParams ? Object.keys(queryParams) : [];
-  let updatedUrl = url;
+  const searchParams = new URLSearchParams();
 
-  if (!queryParamKeys.length || !queryParams) return url;
-
-  queryParamKeys.forEach((param: string, index: number) => {
-    const paramValue = queryParams[param];
-    const queryPartial = Array.isArray(paramValue)
-      ? expandArrayParams(param, paramValue)
-      : `${encodeURIComponent(param)}=${encodeURIComponent(paramValue)}`;
-    updatedUrl = `${updatedUrl}${index ? "&" : "?"}${queryPartial}`;
+  Object.entries(queryParams ?? {}).forEach(([key, value]) => {
+    if (value === undefined || value === null) return;
+    const values = Array.isArray(value) ? value : [value];
+    values.forEach((entry) => searchParams.append(key, String(entry)));
   });
 
-  return updatedUrl;
+  const queryString = searchParams.toString();
+  if (!queryString) return url;
+
+  return `${url}${url.includes("?") ? "&" : "?"}${queryString}`;
 };
 
 export const buildUrl = (
   url: string,
   pathParams?: RequestOptions["pathParams"],
   queryParams?: RequestOptions["queryParams"]
-) => {
-  let updatedUrl = url;
-  updatedUrl = replacePathParams(removeTrailingSlash(updatedUrl), pathParams);
-  updatedUrl = appendQueryParams(updatedUrl, queryParams);
-
-  return updatedUrl;
-};
+) => appendQueryParams(replacePathParams(removeTrailingSlash(url), pathParams), queryParams);

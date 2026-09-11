@@ -1,23 +1,31 @@
 import { LocalDate, Year } from "@js-joda/core";
+import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { Job } from "./components/job";
-import { ResumeSection } from "./components/resume-section";
+import { Job } from "~/components/resume/components/job";
+import { ResumeSection } from "~/components/resume/components/resume-section";
+import { visuallyHidden } from "~/helpers/styles";
 
-const comcastStartDate = LocalDate.of(2000, 12, 7);
+const COMCAST_START_DATE = LocalDate.of(2000, 12, 7);
+/** Of the career total, the years spent on back-end Java work rather than front-end. */
+const BACK_END_YEARS = 6;
 
-const calculateYearsSinceFirstJob = () => Year.now().value() - comcastStartDate.year();
+const getCareerYears = () => Year.now().value() - COMCAST_START_DATE.year();
 
 export const ResumePage = () => {
   return (
     <Stack spacing={4}>
+      <Typography component="h1" variant="h2">
+        Resume
+      </Typography>
+
       <ResumeSection title="Professional Summary">
         <Stack spacing={2}>
           <Typography>
-            With {calculateYearsSinceFirstJob() - 6} years of front-end development experience, I specialize in building
+            With {getCareerYears() - BACK_END_YEARS} years of front-end development experience, I specialize in building
             robust internet applications using HTML, CSS, JavaScript, and React. I bring strong conceptual thinking,
             business acumen, and analytical expertise to every project. Known for being a collaborative team player, I
             quickly absorb new concepts and apply them effectively. My organizational and interpersonal skills support
@@ -25,9 +33,10 @@ export const ResumePage = () => {
           </Typography>
 
           <Typography>
-            On the back end, I have 6 years of experience in the analysis, design, development, administration, and
-            documentation of enterprise-level business applications using Java. I am well-versed in Object-Oriented
-            Analysis and Design (OOA&D), with practical knowledge of design patterns including Singleton and Factory.
+            On the back end, I have {BACK_END_YEARS} years of experience in the analysis, design, development,
+            administration, and documentation of enterprise-level business applications using Java. I am well-versed in
+            Object-Oriented Analysis and Design (OOA&D), with practical knowledge of design patterns including Singleton
+            and Factory.
           </Typography>
         </Stack>
       </ResumeSection>
@@ -54,6 +63,10 @@ export const ResumePage = () => {
           <ListItem disablePadding>
             <Link href="https://www.allisonweinreb.com/" rel="noopener noreferrer" target="_blank" variant="body1">
               Allison O&apos;Brien
+              <Box component="span" sx={visuallyHidden}>
+                {" "}
+                (opens in a new tab)
+              </Box>
             </Link>
             <Typography>&nbsp;- A personal website showcasing Ally&apos;s portfolio and projects.</Typography>
           </ListItem>
@@ -158,7 +171,7 @@ export const ResumePage = () => {
 
           <Job
             company="Comcast"
-            dates={{ start: comcastStartDate, end: LocalDate.of(2007, 7, 13) }}
+            dates={{ start: COMCAST_START_DATE, end: LocalDate.of(2007, 7, 13) }}
             title="Software Engineer"
           >
             <Typography>

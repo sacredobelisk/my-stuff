@@ -10,16 +10,28 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import type { ReactNode } from "react";
 import { NavLink } from "react-router";
 
-type Props = {
+export const NAV_DRAWER_ID = "main-navigation-drawer";
+
+interface Props {
   drawerWidth: number;
   mobileOpen: boolean;
   onDrawerClose: () => void;
-};
+}
 
-const navItems = [
-  { icon: <HomeOutlinedIcon />, label: "Home", to: "/" },
+interface NavItem {
+  /** Match this route exactly rather than as a path prefix. */
+  end?: boolean;
+  icon: ReactNode;
+  label: string;
+  to: string;
+}
+
+const navItems: NavItem[] = [
+  // Without `end`, "/" prefix-matches every route and Home stays highlighted everywhere.
+  { end: true, icon: <HomeOutlinedIcon />, label: "Home", to: "/" },
   { icon: <ReceiptLongOutlinedIcon />, label: "Bill Calculator", to: "/bill-calculator" },
   { icon: <QrCode2OutlinedIcon />, label: "QR Code Generator", to: "/qr-code-generator" },
   { icon: <WorkOutlineOutlinedIcon />, label: "Resume", to: "/resume" },
@@ -32,6 +44,7 @@ const DrawerContent = ({ onItemClick }: { onItemClick?: () => void }) => (
       <ListItem key={item.to} disablePadding>
         <ListItemButton
           component={NavLink}
+          end={item.end}
           to={item.to}
           onClick={onItemClick}
           sx={{
@@ -51,38 +64,37 @@ const DrawerContent = ({ onItemClick }: { onItemClick?: () => void }) => (
   </List>
 );
 
-export const Nav = ({ drawerWidth, mobileOpen, onDrawerClose }: Props) => {
-  return (
-    <Box aria-label="Main navigation" component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
-      {/* Mobile drawer - temporary, controlled by state */}
-      <Drawer
-        variant="temporary"
-        open={mobileOpen}
-        onClose={onDrawerClose}
-        ModalProps={{ keepMounted: true }}
-        sx={{
-          display: { xs: "block", sm: "none" },
-          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
-        }}
-      >
-        <DrawerContent onItemClick={onDrawerClose} />
-      </Drawer>
-      {/* Desktop drawer - permanent, always visible */}
-      <Drawer
-        variant="permanent"
-        sx={{
-          display: { xs: "none", sm: "block" },
-          height: "100%",
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
-            width: drawerWidth,
-            position: "relative",
-          },
-        }}
-        open
-      >
-        <DrawerContent />
-      </Drawer>
-    </Box>
-  );
-};
+export const Nav = ({ drawerWidth, mobileOpen, onDrawerClose }: Props) => (
+  <Box aria-label="Main navigation" component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+    {/* Mobile drawer - temporary, controlled by state */}
+    <Drawer
+      id={NAV_DRAWER_ID}
+      variant="temporary"
+      open={mobileOpen}
+      onClose={onDrawerClose}
+      ModalProps={{ keepMounted: true }}
+      sx={{
+        display: { xs: "block", sm: "none" },
+        "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+      }}
+    >
+      <DrawerContent onItemClick={onDrawerClose} />
+    </Drawer>
+    {/* Desktop drawer - permanent, always visible */}
+    <Drawer
+      variant="permanent"
+      sx={{
+        display: { xs: "none", sm: "block" },
+        height: "100%",
+        "& .MuiDrawer-paper": {
+          boxSizing: "border-box",
+          width: drawerWidth,
+          position: "relative",
+        },
+      }}
+      open
+    >
+      <DrawerContent />
+    </Drawer>
+  </Box>
+);

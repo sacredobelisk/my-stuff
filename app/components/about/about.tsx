@@ -1,18 +1,18 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-// import { HighestRated } from "../bgg/highest-rated/highest-rated";
-import { LastPlays } from "../bgg/last-plays/last-plays";
+import { LastPlays } from "~/components/bgg/last-plays/last-plays";
 
-export function AboutPage() {
-  return (
-    <Stack spacing={2}>
-      <Typography>
-        Hi! I&apos;m Sean OBrien, a software engineer based outside of Philadelphia. I specialize in creating web
-        applications using modern technologies like React, JavaScript, and TypeScript.
-      </Typography>
+export const AboutPage = () => (
+  <Stack spacing={2}>
+    <Typography component="h1" variant="h2">
+      About
+    </Typography>
 
-      <LastPlays />
-      {/* <HighestRated /> */}
-    </Stack>
-  );
-}
+    <Typography>
+      Hi! I&apos;m Sean OBrien, a software engineer based outside of Philadelphia. I specialize in creating web
+      applications using modern technologies like React, JavaScript, and TypeScript.
+    </Typography>
+
+    <LastPlays />
+  </Stack>
+);
