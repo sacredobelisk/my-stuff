@@ -1,5 +1,6 @@
 import CasinoOutlinedIcon from "@mui/icons-material/CasinoOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import QrCode2OutlinedIcon from "@mui/icons-material/QrCode2Outlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import Box from "@mui/material/Box";
@@ -20,6 +21,7 @@ type Props = {
 const navItems = [
   { icon: <HomeOutlinedIcon />, label: "Home", to: "/" },
   { icon: <ReceiptLongOutlinedIcon />, label: "Bill Calculator", to: "/bill-calculator" },
+  { icon: <QrCode2OutlinedIcon />, label: "QR Code Generator", to: "/qr-code-generator" },
   { icon: <WorkOutlineOutlinedIcon />, label: "Resume", to: "/resume" },
   { icon: <CasinoOutlinedIcon />, label: "Board Game 10x10", to: "/10x10" },
 ];
