@@ -24,6 +24,16 @@ export default defineConfig([
       tanstack.configs["flat/recommended"],
     ],
     languageOptions: { globals: globals.browser },
+    rules: {
+      "@tanstack/query/exhaustive-deps": [
+        "error",
+        {
+          allowlist: {
+            variables: ["del", "get", "patch", "post", "put"],
+          },
+        },
+      ],
+    },
     settings: {
       react: {
         version: "detect",
@@ -50,19 +60,6 @@ export default defineConfig([
       "react/react-in-jsx-scope": "off",
       quotes: ["error", "double"],
       semi: ["error", "always"],
-    },
-  },
-
-  {
-    rules: {
-      "@tanstack/query/exhaustive-deps": [
-        "error",
-        {
-          allowlist: {
-            variables: ["del", "get", "patch", "post", "put"],
-          },
-        },
-      ],
     },
   },
 
