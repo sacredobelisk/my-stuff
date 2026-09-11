@@ -92,7 +92,7 @@ Env vars are validated at startup via [utils/env-vars.ts](../app/utils/env-vars.
 
 | Variable              | Purpose                                                                    |
 | --------------------- | -------------------------------------------------------------------------- |
-| `VITE_BGA_AUTH_TOKEN` | BoardGameGeek API auth token, used by the About and Board Game 10x10 pages |
+| `VITE_BGG_AUTH_TOKEN` | BoardGameGeek API auth token, used by the About and Board Game 10x10 pages |
 
 ## Adding New Routes
 
