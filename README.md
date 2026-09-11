@@ -1,58 +1,71 @@
-# Welcome to React Router!
+# my-stuff
 
-A modern, production-ready template for building full-stack React applications using React Router.
+The source for [sean-obrien.net](https://www.sean-obrien.net) — a personal site with a handful of small tools.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+- **About** — landing page, with recent board game plays pulled from BoardGameGeek.
+- **Bill Calculator** — splits a bill proportionally across a group, with adjustable tax and tip.
+- **QR Code Generator** — turns any text or URL into a downloadable QR code.
+- **Resume** — professional history.
+- **Board Game 10x10** — progress against the 10x10 board game challenge.
 
-## Features
+## Tech Stack
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 📖 [React Router docs](https://reactrouter.com/)
+| Category  | Technology                          |
+| --------- | ----------------------------------- |
+| Framework | React 19, React Router 8 (SPA mode) |
+| Language  | TypeScript                          |
+| Build     | Vite                                |
+| UI        | MUI, Base UI                        |
+| Data      | TanStack Query, fast-xml-parser     |
+| Dates     | js-joda                             |
+| Tooling   | ESLint, Prettier, Vitest            |
+
+Server-side rendering is off (`ssr: false` in [react-router.config.ts](react-router.config.ts)); the app builds to a
+static bundle and is deployed to Netlify, with [public/\_redirects](public/_redirects) handling client-side routing.
 
 ## Getting Started
-
-### Installation
-
-Install the dependencies:
 
 ```bash
 npm install
 ```
 
-### Development
-
-Start the development server with HMR:
+Copy [.env.example](.env.example) to `.env` and fill in the BoardGameGeek token:
 
 ```bash
-npm run dev
+cp .env.example .env
 ```
 
-Your application will be available at `http://localhost:5173`.
+The app starts without it — the request that needs it just fails and the board game pages show an
+error instead of plays.
 
-## Building for Production
-
-Create a production build:
+## Commands
 
 ```bash
-npm run build
+npm run dev        # Dev server with HMR at http://localhost:5173
+npm run build      # Production build to /build/client
+npm test           # Unit tests
+npm run lint       # ESLint
+npm run typecheck  # React Router typegen + tsc
 ```
 
-## Deployment
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
+## Project Structure
 
 ```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+app/
+├── apis/           # Fetch wrapper (use-api) and BoardGameGeek query hooks
+├── components/     # Feature components, one folder each
+├── helpers/        # Formatting and shared sx
+├── hooks/          # Generic reusable hooks
+├── routes/         # Route modules — meta + default export only
+├── utils/          # Env vars, page meta, shared types
+├── root.tsx        # Document shell, app bar, nav, error boundary
+└── routes.ts       # Route table
 ```
+
+Feature components follow a consistent shape: the component itself at the top level, with `configuration/`
+(types and pure helpers) and `hooks/` (state) beside it.
+
+## Conventions
+
+Coding standards live in [.claude/skills/coding-standard/SKILL.md](.claude/skills/coding-standard/SKILL.md);
+architectural notes are in [.claude/docs/architectural_patterns.md](.claude/docs/architectural_patterns.md).

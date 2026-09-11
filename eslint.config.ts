@@ -62,12 +62,4 @@ export default defineConfig([
       semi: ["error", "always"],
     },
   },
-
-  // turn off no-empty-pattern rule for route meta functions
-  {
-    files: ["**/app/routes/**/*.tsx"],
-    rules: {
-      "no-empty-pattern": "off",
-    },
-  },
 ]);

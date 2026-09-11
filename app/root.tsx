@@ -2,12 +2,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
+import Stack from "@mui/material/Stack";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { type PropsWithChildren, useState } from "react";
+import { useState, type PropsWithChildren } from "react";
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
-import { Nav } from "~/components/nav/nav";
+import { Nav, NAV_DRAWER_ID } from "~/components/nav/nav";
 import { GlobalProviders } from "~/components/providers";
+import { skipLinkSx } from "~/helpers/styles";
 import type { Route } from "./+types/root";
 
 import "./app.css";
@@ -25,9 +28,10 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-const drawerWidth = 240;
+const DRAWER_WIDTH = 240;
+const MAIN_CONTENT_ID = "main-content";
 
-function LayoutContent({ children }: PropsWithChildren) {
+const LayoutContent = ({ children }: PropsWithChildren) => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -36,57 +40,61 @@ function LayoutContent({ children }: PropsWithChildren) {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <Link href={`#${MAIN_CONTENT_ID}`} sx={skipLinkSx}>
+        Skip to main content
+      </Link>
       <AppBar position="static">
         <Toolbar>
           <IconButton
+            aria-controls={NAV_DRAWER_ID}
+            aria-expanded={mobileOpen}
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
             color="inherit"
-            aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: "none" } }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h1" noWrap>
+          {/* Each page owns its own <h1>, so the site title here is presentational. */}
+          <Typography component="div" variant="h1" noWrap>
             Sean OBrien
           </Typography>
         </Toolbar>
       </AppBar>
       <Box sx={{ display: "flex", flexGrow: 1 }}>
-        <Nav drawerWidth={drawerWidth} mobileOpen={mobileOpen} onDrawerClose={handleDrawerToggle} />
-        <Box component="main" sx={{ flexGrow: 1, p: 2 }}>
+        <Nav drawerWidth={DRAWER_WIDTH} mobileOpen={mobileOpen} onDrawerClose={handleDrawerToggle} />
+        <Box component="main" id={MAIN_CONTENT_ID} sx={{ flexGrow: 1, p: 2 }} tabIndex={-1}>
           {children}
         </Box>
       </Box>
     </Box>
   );
-}
+};
 
-export function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <GlobalProviders>
-          <LayoutContent>{children}</LayoutContent>
-        </GlobalProviders>
-        <ScrollRestoration />
-        <Scripts />
-      </body>
-    </html>
-  );
-}
+export const Layout = ({ children }: PropsWithChildren) => (
+  <html lang="en">
+    <head>
+      <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <Meta />
+      <Links />
+    </head>
+    <body>
+      <GlobalProviders>
+        <LayoutContent>{children}</LayoutContent>
+      </GlobalProviders>
+      <ScrollRestoration />
+      <Scripts />
+    </body>
+  </html>
+);
 
 export default function App() {
   return <Outlet />;
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+export const ErrorBoundary = ({ error }: Route.ErrorBoundaryProps) => {
   let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
@@ -99,15 +107,18 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     stack = error.stack;
   }
 
+  // Rendered inside the layout's <main>, so this must not introduce a second landmark.
   return (
-    <main>
-      <h1>{message}</h1>
-      <p>{details}</p>
+    <Stack spacing={2}>
+      <Typography component="h1" variant="h2">
+        {message}
+      </Typography>
+      <Typography>{details}</Typography>
       {stack && (
-        <pre>
+        <Box component="pre" sx={{ backgroundColor: "action.hover", borderRadius: 1, overflowX: "auto", p: 2 }}>
           <code>{stack}</code>
-        </pre>
+        </Box>
       )}
-    </main>
+    </Stack>
   );
-}
+};

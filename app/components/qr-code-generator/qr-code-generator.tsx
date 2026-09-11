@@ -15,10 +15,14 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Typography from "@mui/material/Typography";
 import { QRCodeCanvas } from "qrcode.react";
-import NumberField from "~/components/number-field/number-field";
-import type { QrCodeErrorCorrectionLevel } from "./configuration/types";
-import { MAX_QR_CODE_SIZE, MIN_QR_CODE_SIZE } from "./configuration/utils";
-import { useQrCodeGenerator } from "./hooks/use-qr-code-generator";
+import { NumberField } from "~/components/number-field/number-field";
+import type { QrCodeErrorCorrectionLevel } from "~/components/qr-code-generator/configuration/types";
+import {
+  MAX_QR_CODE_SIZE,
+  MIN_QR_CODE_SIZE,
+  QR_CODE_SIZE_STEP,
+} from "~/components/qr-code-generator/configuration/utils";
+import { useQrCodeGenerator } from "~/components/qr-code-generator/hooks/use-qr-code-generator";
 
 const ERROR_CORRECTION_LEVELS: { label: string; value: QrCodeErrorCorrectionLevel }[] = [
   { label: "Low", value: "L" },
@@ -27,8 +31,17 @@ const ERROR_CORRECTION_LEVELS: { label: string; value: QrCodeErrorCorrectionLeve
   { label: "High", value: "H" },
 ];
 
+const MAX_LABEL_PREVIEW_LENGTH = 60;
+
+const describeQrCode = (value: string) => {
+  const preview = value.length > MAX_LABEL_PREVIEW_LENGTH ? `${value.slice(0, MAX_LABEL_PREVIEW_LENGTH)}…` : value;
+  return `QR code for ${preview}`;
+};
+
 export const QrCodeGeneratorPage = () => {
   const {
+    byteLength,
+    canRender,
     canvasRef,
     errorCorrectionLevel,
     handleDownload,
@@ -36,6 +49,8 @@ export const QrCodeGeneratorPage = () => {
     handleReset,
     handleSizeChange,
     handleValueChange,
+    isOverCapacity,
+    maxBytes,
     size,
     value,
   } = useQrCodeGenerator();
@@ -43,15 +58,17 @@ export const QrCodeGeneratorPage = () => {
   return (
     <Stack spacing={2}>
       <Stack direction="row" spacing={2} sx={{ alignItems: "center" }}>
-        <Typography sx={{ flex: "auto" }} variant="h2">
-          QR Code Generator
+        <Box sx={{ flex: "auto" }}>
+          <Typography component="h1" variant="h2">
+            QR Code Generator
+          </Typography>
           <Typography color="textSecondary">Generate a downloadable QR code from any text or URL.</Typography>
-        </Typography>
+        </Box>
 
         <Box sx={{ flex: "none" }}>
           <ButtonGroup>
             <Button
-              disabled={!value}
+              disabled={!canRender}
               onClick={handleDownload}
               startIcon={<FileDownloadOutlinedIcon />}
               variant="contained"
@@ -73,7 +90,13 @@ export const QrCodeGeneratorPage = () => {
           <CardContent>
             <Stack spacing={3}>
               <TextField
+                error={isOverCapacity}
                 fullWidth
+                helperText={
+                  isOverCapacity
+                    ? `Too long to encode: ${byteLength} of ${maxBytes} bytes. Shorten the text or lower the error correction level.`
+                    : `${byteLength} of ${maxBytes} bytes used.`
+                }
                 label="Text or URL"
                 minRows={3}
                 multiline
@@ -83,28 +106,36 @@ export const QrCodeGeneratorPage = () => {
               />
 
               <Stack spacing={0.5}>
-                <Typography id="size-slider">Size: {size}px</Typography>
+                <Stack direction="row" spacing={1} sx={{ alignItems: "baseline" }}>
+                  <Typography id="size-label" sx={{ flex: "auto" }}>
+                    Size
+                  </Typography>
+                  {/* Both controls announce the value themselves, so this readout is decoration. */}
+                  <Typography aria-hidden color="textSecondary">
+                    {size}px
+                  </Typography>
+                </Stack>
 
                 <Grid container spacing={2} sx={{ alignItems: "center" }}>
                   <Grid size="grow">
                     <Slider
-                      aria-labelledby="size-slider"
+                      aria-labelledby="size-label"
                       max={MAX_QR_CODE_SIZE}
                       min={MIN_QR_CODE_SIZE}
-                      onChange={(event, newSize) => handleSizeChange(newSize as number)}
-                      step={8}
+                      onChange={(_, newSize) => handleSizeChange(newSize as number)}
+                      step={QR_CODE_SIZE_STEP}
                       value={size}
                     />
                   </Grid>
                   <Grid>
                     <NumberField
-                      aria-labelledby="size-slider"
+                      aria-labelledby="size-label"
                       inputSx={{ width: 90 }}
                       max={MAX_QR_CODE_SIZE}
                       min={MIN_QR_CODE_SIZE}
-                      onValueChange={(newSize) => handleSizeChange(newSize ?? MIN_QR_CODE_SIZE)}
+                      onValueChange={handleSizeChange}
                       size="small"
-                      step={8}
+                      step={QR_CODE_SIZE_STEP}
                       value={size}
                     />
                   </Grid>
@@ -112,11 +143,12 @@ export const QrCodeGeneratorPage = () => {
               </Stack>
 
               <Stack spacing={1}>
-                <Typography>Error Correction</Typography>
+                <Typography id="error-correction-label">Error Correction</Typography>
                 <ToggleButtonGroup
+                  aria-labelledby="error-correction-label"
                   color="primary"
                   exclusive
-                  onChange={(event, newLevel: QrCodeErrorCorrectionLevel | null) => {
+                  onChange={(_, newLevel: QrCodeErrorCorrectionLevel | null) => {
                     if (newLevel) handleErrorCorrectionLevelChange(newLevel);
                   }}
                   size="small"
@@ -137,10 +169,20 @@ export const QrCodeGeneratorPage = () => {
           <CardHeader title="Preview" />
           <CardContent>
             <Stack sx={{ alignItems: "center", justifyContent: "center", minHeight: MIN_QR_CODE_SIZE, py: 2 }}>
-              {value ? (
-                <QRCodeCanvas level={errorCorrectionLevel} marginSize={2} ref={canvasRef} size={size} value={value} />
-              ) : (
-                <Typography color="textSecondary">Enter text or a URL to generate a QR code.</Typography>
+              {canRender && (
+                <QRCodeCanvas
+                  aria-label={describeQrCode(value)}
+                  level={errorCorrectionLevel}
+                  marginSize={2}
+                  ref={canvasRef}
+                  role="img"
+                  size={size}
+                  value={value}
+                />
+              )}
+              {!value && <Typography color="textSecondary">Enter text or a URL to generate a QR code.</Typography>}
+              {isOverCapacity && (
+                <Typography color="error">The text is too long to fit in a QR code at this level.</Typography>
               )}
             </Stack>
           </CardContent>
